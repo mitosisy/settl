@@ -168,6 +168,14 @@ class WalletNotifier extends Notifier<WalletState> {
     }
   }
 
+  /// Deducts USDC balance locally (used for hackathon demo since we 
+  /// are mocking the signed transaction broadcast).
+  void deductMockBalance(double amountUsdc) {
+    if (state.usdcBalance >= amountUsdc) {
+      state = state.copyWith(usdcBalance: state.usdcBalance - amountUsdc);
+    }
+  }
+
   /// Updates the display name.
   Future<void> updateDisplayName(String name) async {
     final wallet = state.wallet;

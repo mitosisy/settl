@@ -112,15 +112,16 @@ class ReputationScreen extends ConsumerWidget {
                 const Spacer(),
 
                 // Actions
+                // Actions
                 if (reputation.verdict == ReputationVerdict.flagged)
-                  TextButton(
+                  ElevatedButton(
                     onPressed: () => _navigateToAmountEntry(context),
-                    child: Text(
-                      Strings.riskOverride,
-                      style: AppTypography.labelLarge.copyWith(
-                        color: AppColors.brandRed,
-                      ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.brandRed.withAlpha(50),
+                      foregroundColor: AppColors.brandRed,
+                      side: const BorderSide(color: AppColors.brandRed),
                     ),
+                    child: const Text(Strings.riskOverride),
                   ).animate().fadeIn(delay: 1200.ms)
                 else
                   ElevatedButton(
@@ -204,7 +205,15 @@ class ReputationScreen extends ConsumerWidget {
   }
 
   void _navigateToAmountEntry(BuildContext context) {
-    context.push('/scan/amount', extra: merchant);
+    if (merchant.amount != null && merchant.amount! > 0) {
+      context.push('/scan/confirm', extra: {
+        'merchant': merchant,
+        'amountUsdc': merchant.amount!,
+        'memo': merchant.name, // Fallback if name was parsed from memo
+      });
+    } else {
+      context.push('/scan/amount', extra: merchant);
+    }
   }
 }
 

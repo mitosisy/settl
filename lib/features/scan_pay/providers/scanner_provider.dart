@@ -108,6 +108,7 @@ class ScannerNotifier extends Notifier<ScannerState> {
               walletAddress: parsed.recipientAddress,
               label: parsed.label,
               name: parsed.memo,
+              amount: parsed.amount,
             ),
           );
           return;

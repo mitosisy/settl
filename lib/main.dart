@@ -9,6 +9,10 @@ import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/core/router/app_router.dart';
 import 'package:chain_pay/features/settings/providers/settings_provider.dart';
 
+import 'package:chain_pay/services/solana_service.dart';
+import 'package:chain_pay/features/payment_intent/services/intent_broadcaster.dart';
+import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
@@ -24,9 +28,19 @@ void main() async {
   // Open necessary boxes
   await Hive.openBox<String>(AppConstants.walletBoxName);
 
+  // Initialize Core Services
+  final solanaService = SolanaService();
+  final intentBroadcaster = IntentBroadcaster(solanaService: solanaService);
+  await intentBroadcaster.init();
+  intentBroadcaster.startListening();
+
   runApp(
-    const ProviderScope(
-      child: ChainPayApp(),
+    ProviderScope(
+      overrides: [
+        solanaServiceProvider.overrideWithValue(solanaService),
+        intentBroadcasterProvider.overrideWithValue(intentBroadcaster),
+      ],
+      child: const ChainPayApp(),
     ),
   );
 }

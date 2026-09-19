@@ -136,10 +136,16 @@ class IntentBroadcaster {
   /// Flushes all queued intents by broadcasting them to Solana devnet.
   Future<void> _flushQueue() async {
     final intents = await getQueuedIntents();
+    final now = DateTime.now();
 
     for (final intent in intents) {
       try {
         await updateIntentStatus(intent.id, IntentStatus.broadcasting);
+
+        // Check for stale blockhash (2 minutes)
+        if (now.difference(intent.createdAt).inMinutes >= 2) {
+          throw Exception('Blockhash expired. Intent is older than 2 minutes.');
+        }
 
         // Broadcast the signed transaction
         await solanaService.sendRawTransaction(

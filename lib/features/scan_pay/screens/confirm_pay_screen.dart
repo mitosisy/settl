@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import 'package:chain_pay/core/theme/app_colors.dart';
 import 'package:chain_pay/core/theme/app_typography.dart';
@@ -45,29 +46,60 @@ class _ConfirmPayScreenState extends ConsumerState<ConfirmPayScreen> {
       final signer = ref.read(intentSignerProvider);
       final broadcaster = ref.read(intentBroadcasterProvider);
 
-      // Sign the intent locally (assume online for this demo flow)
+      // Check real connectivity
+      final connectivityResult = await Connectivity().checkConnectivity();
+      final isOnline = connectivityResult.any((r) => r != ConnectivityResult.none);
+
+      // Sign the intent locally
       final intent = await signer.signIntent(
         recipientAddress: widget.merchant.walletAddress,
         amountUsdc: widget.amountUsdc,
         memo: widget.memo,
         recipientName: widget.merchant.displayName,
-        isOnline: true,
+        isOnline: isOnline,
       );
 
       // Enqueue the signed intent
       await broadcaster.enqueueIntent(intent);
 
-      // Trigger a manual flush to try broadcasting immediately
-      await broadcaster.manualFlush();
+      if (isOnline) {
+        // Trigger a manual flush to try broadcasting immediately
+        await broadcaster.manualFlush();
+      }
 
       if (mounted) {
-        // Just return to home screen and let the queue banner/history handle status
-        context.go('/home');
+        // Show success indicator (Green if online, Amber if offline)
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                Icon(
+                  isOnline ? Icons.check_circle_rounded : Icons.offline_bolt_rounded,
+                  color: isOnline ? AppColors.brandGreen : AppColors.brandAmber,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    isOnline ? Strings.paymentSuccessful : Strings.offlineSigned,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: AppColors.bgElevated,
+            duration: const Duration(seconds: 2),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+
+        // Wait briefly so user sees the success state, then navigate home
+        await Future.delayed(const Duration(seconds: 1));
+        if (mounted) context.go('/home');
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(e.toString())),
+          SnackBar(content: Text(e.toString()), backgroundColor: AppColors.brandRed),
         );
         setState(() => _isProcessing = false);
       }

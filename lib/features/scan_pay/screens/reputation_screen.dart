@@ -95,7 +95,7 @@ class ReputationScreen extends ConsumerWidget {
                 ).animate().fadeIn(delay: 800.ms),
                 const SizedBox(height: 32),
 
-                // Detailed metrics
+                // Detailed metrics as Evidence bullets
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -103,27 +103,8 @@ class ReputationScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
-                    children: [
-                      _MetricRow(
-                        label: Strings.transactionCount,
-                        value: reputation.txnCount.toString(),
-                      ),
-                      const SizedBox(height: 12),
-                      _MetricRow(
-                        label: Strings.walletAge,
-                        value: '${reputation.walletAgeDays} days',
-                      ),
-                      const SizedBox(height: 12),
-                      _MetricRow(
-                        label: Strings.rugPullFlags,
-                        value: reputation.rugPullFlags == 0
-                            ? Strings.noneDetected
-                            : reputation.rugPullFlags.toString(),
-                        valueColor: reputation.rugPullFlags == 0
-                            ? AppColors.brandGreen
-                            : AppColors.brandRed,
-                      ),
-                    ],
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _buildEvidenceList(reputation),
                   ),
                 ).animate().fadeIn(delay: 1000.ms).slideY(
                     begin: 0.1, end: 0, duration: 400.ms, delay: 1000.ms),
@@ -171,37 +152,94 @@ class ReputationScreen extends ConsumerWidget {
     }
   }
 
+  List<Widget> _buildEvidenceList(ReputationModel rep) {
+    final List<Widget> items = [];
+    final v = rep.verdict;
+
+    // Txn count / Age evidence
+    if (v == ReputationVerdict.trusted) {
+      items.add(_EvidenceRow(
+        text: '${rep.txnCount} transactions over ${(rep.walletAgeDays / 30).floor()} months',
+        color: AppColors.brandGreen,
+      ));
+    } else if (v == ReputationVerdict.unverified) {
+      items.add(_EvidenceRow(
+        text: 'Only ${rep.txnCount} transactions in ${(rep.walletAgeDays / 30).floor()} months',
+        color: AppColors.brandAmber,
+      ));
+      items.add(const SizedBox(height: 12));
+      items.add(_EvidenceRow(
+        text: 'Volume history too thin to verify',
+        color: AppColors.brandAmber,
+      ));
+    } else {
+      items.add(_EvidenceRow(
+        text: 'Wallet created only ${rep.walletAgeDays} days ago',
+        color: AppColors.brandRed,
+      ));
+      items.add(const SizedBox(height: 12));
+      items.add(_EvidenceRow(
+        text: 'Just ${rep.txnCount} transactions on record',
+        color: AppColors.brandRed,
+      ));
+    }
+
+    // Rug pull flags
+    items.add(const SizedBox(height: 12));
+    if (rep.rugPullFlags == 0) {
+      items.add(_EvidenceRow(
+        text: v == ReputationVerdict.trusted 
+            ? 'High volume processed, zero rug-pull flags'
+            : 'No rug-pull flags detected',
+        color: v == ReputationVerdict.trusted ? AppColors.brandGreen : AppColors.brandAmber,
+      ));
+    } else {
+      items.add(_EvidenceRow(
+        text: '${rep.rugPullFlags} rug-pull flag(s): >80% of balance moved in one txn',
+        color: AppColors.brandRed,
+      ));
+    }
+
+    return items;
+  }
+
   void _navigateToAmountEntry(BuildContext context) {
     context.push('/scan/amount', extra: merchant);
   }
 }
 
-class _MetricRow extends StatelessWidget {
-  const _MetricRow({
-    required this.label,
-    required this.value,
-    this.valueColor = AppColors.textPrimary,
+class _EvidenceRow extends StatelessWidget {
+  const _EvidenceRow({
+    required this.text,
+    required this.color,
   });
 
-  final String label;
-  final String value;
-  final Color valueColor;
+  final String text;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: AppTypography.bodyMedium.copyWith(
-            color: AppColors.textSecondary,
+        Padding(
+          padding: const EdgeInsets.only(top: 6, right: 12),
+          child: Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: color,
+              shape: BoxShape.circle,
+            ),
           ),
         ),
-        Text(
-          value,
-          style: AppTypography.labelLarge.copyWith(
-            color: valueColor,
+        Expanded(
+          child: Text(
+            text,
+            style: AppTypography.bodyMedium.copyWith(
+              color: AppColors.textPrimary,
+              height: 1.4,
+            ),
           ),
         ),
       ],

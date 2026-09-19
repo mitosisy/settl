@@ -8,7 +8,7 @@ class AppConstants {
 
   /// USDC SPL token mint address on Solana Devnet
   static const String usdcMintAddress =
-      'Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr';
+      '4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU';
 
   /// Solana Devnet faucet URL
   static const String devnetFaucetUrl = 'https://faucet.solana.com/';

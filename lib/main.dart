@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:chain_pay/core/theme/app_theme.dart';
 import 'package:chain_pay/core/constants/app_constants.dart';
+import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/core/router/app_router.dart';
 import 'package:chain_pay/features/settings/providers/settings_provider.dart';
 
@@ -39,7 +40,7 @@ class ChainPayApp extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
 
     return MaterialApp.router(
-      title: 'ChainPay',
+      title: Strings.appName,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: settings.themeMode,

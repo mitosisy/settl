@@ -5,7 +5,7 @@ class Strings {
   Strings._();
 
   // ─── App ───────────────────────────────────────────────────────
-  static const String appName = 'ChainPay';
+  static const String appName = 'Settl';
   static const String tagline = 'Pay freely. Trust verifiably.';
   static const String networkBadge = 'Solana Devnet';
 
@@ -49,7 +49,7 @@ class Strings {
   static const String queuedBanner = 'payments queued — tap to review';
 
   // ─── Scanner ───────────────────────────────────────────────────
-  static const String scannerOverlay = 'Point at a ChainPay or Solana Pay QR';
+  static const String scannerOverlay = 'Point at a Settl or Solana Pay QR';
   static const String enterManually = 'Or enter address manually';
   static const String invalidQr = 'Invalid payment QR';
 

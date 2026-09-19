@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
@@ -73,20 +74,40 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
   }
 
   Future<void> _importWallet() async {
-    final mnemonic = await _showImportDialog(context);
-    if (mnemonic != null && mnemonic.trim().isNotEmpty) {
+    final input = await _showImportDialog(context);
+    if (input != null && input.trim().isNotEmpty) {
       setState(() => _isLoading = true);
       try {
-        final phrase = mnemonic.trim();
-        final keypair = await Ed25519HDKeyPair.fromMnemonic(phrase);
-        final extracted = await keypair.extract();
-        final privateKeyHex = extracted.bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join();
-        final publicKey = keypair.address;
+        final phraseOrKey = input.trim();
+        String publicKey;
+        String privateKeyHex;
+        String storedMnemonic = '';
+
+        if (phraseOrKey.startsWith('[') && phraseOrKey.endsWith(']')) {
+          // Solana CLI format (JSON array of 64 bytes)
+          final List<dynamic> jsonList = jsonDecode(phraseOrKey);
+          final List<int> bytes = jsonList.cast<int>();
+          // Ed25519HDKeyPair.fromPrivateKeyBytes expects exactly 32 bytes for the private key
+          final keypair = await Ed25519HDKeyPair.fromPrivateKeyBytes(
+            privateKey: bytes.sublist(0, 32),
+          );
+          final extracted = await keypair.extract();
+          privateKeyHex = extracted.bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join();
+          publicKey = keypair.address;
+          storedMnemonic = 'Imported via Private Key';
+        } else {
+          // Standard BIP39 Seed Phrase
+          final keypair = await Ed25519HDKeyPair.fromMnemonic(phraseOrKey);
+          final extracted = await keypair.extract();
+          privateKeyHex = extracted.bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join();
+          publicKey = keypair.address;
+          storedMnemonic = phraseOrKey;
+        }
 
         await ref.read(walletProvider.notifier).createWallet(
           publicKey: publicKey,
           privateKey: privateKeyHex,
-          mnemonic: phrase,
+          mnemonic: storedMnemonic,
           displayName: 'Imported Wallet',
         );
 
@@ -96,7 +117,7 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Invalid seed phrase')),
+            const SnackBar(content: Text('Invalid seed phrase or private key format')),
           );
         }
       } finally {
@@ -118,7 +139,7 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Enter your 12-word seed phrase separated by spaces.', 
+            Text('Enter your 12-word seed phrase or a Solana CLI private key array (e.g. [12, 34...]).', 
                  style: AppTypography.bodyMedium),
             const SizedBox(height: 16),
             TextField(
@@ -126,7 +147,7 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
               maxLines: 3,
               style: AppTypography.bodyLarge,
               decoration: const InputDecoration(
-                hintText: 'apple banana cherry...',
+                hintText: 'apple banana cherry... OR [1, 2, 3...]',
               ),
             ),
           ],

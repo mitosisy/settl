@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'package:go_router/go_router.dart';
+
 import 'package:chain_pay/core/theme/app_colors.dart';
 import 'package:chain_pay/core/theme/app_typography.dart';
 import 'package:chain_pay/features/settings/providers/settings_provider.dart';
+import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -71,17 +74,35 @@ class SettingsScreen extends ConsumerWidget {
               color: AppColors.bgElevated,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: ListTile(
-              title: Text(
-                'Reveal Seed Phrase',
-                style: AppTypography.bodyLarge.copyWith(color: AppColors.brandRed),
-              ),
-              trailing: const Icon(Icons.warning_amber_rounded, color: AppColors.brandRed),
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Not available in demo mode')),
-                );
-              },
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text(
+                    'Reveal Seed Phrase',
+                    style: AppTypography.bodyLarge,
+                  ),
+                  trailing: const Icon(Icons.security, color: AppColors.textSecondary),
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Not available in demo mode')),
+                    );
+                  },
+                ),
+                const Divider(height: 1),
+                ListTile(
+                  title: Text(
+                    'Disconnect Wallet',
+                    style: AppTypography.bodyLarge.copyWith(color: AppColors.brandRed),
+                  ),
+                  trailing: const Icon(Icons.logout_rounded, color: AppColors.brandRed),
+                  onTap: () async {
+                    await ref.read(walletProvider.notifier).removeWallet();
+                    if (context.mounted) {
+                      context.go('/');
+                    }
+                  },
+                ),
+              ],
             ),
           ),
         ],

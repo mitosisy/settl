@@ -161,6 +161,28 @@ class WalletNotifier extends Notifier<WalletState> {
     await box.put('wallet', jsonEncode(updated.toJson()));
     state = state.copyWith(wallet: updated);
   }
+
+  /// Removes the wallet and private keys from the device.
+  Future<void> removeWallet() async {
+    state = const WalletState(isLoading: true);
+    
+    try {
+      // Delete private keys from secure storage
+      await _secureStorage.delete(key: AppConstants.privateKeyStorageKey);
+      await _secureStorage.delete(key: AppConstants.mnemonicStorageKey);
+
+      // Delete public wallet data from Hive
+      final box = Hive.box<String>(AppConstants.walletBoxName);
+      await box.delete('wallet');
+
+      state = const WalletState(); // Reset state completely
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Failed to remove wallet.',
+      );
+    }
+  }
 }
 
 /// The wallet provider — central state for the user's wallet.

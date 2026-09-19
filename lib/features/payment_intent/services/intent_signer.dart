@@ -1,6 +1,8 @@
-import 'dart:convert';
 import 'dart:typed_data';
 import 'package:uuid/uuid.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:solana/solana.dart';
+import 'package:solana/encoder.dart';
 
 import 'package:chain_pay/core/constants/app_constants.dart';
 import 'package:chain_pay/core/errors/app_exception.dart';
@@ -51,19 +53,70 @@ class IntentSigner {
         blockhash = _cachedBlockhash!;
       }
 
-      // For hackathon demo: create a mock signed transaction
-      // In production, this would use the solana package to build
-      // and sign a real SPL token transfer instruction
-      final mockTxPayload = {
-        'blockhash': blockhash,
-        'recipient': recipientAddress,
-        'amount': amountUsdc,
-        'memo': memo,
-        'timestamp': DateTime.now().toIso8601String(),
-      };
+      // Read mnemonic to reconstruct keypair
+      final mnemonic = await const FlutterSecureStorage().read(key: AppConstants.mnemonicStorageKey);
+      if (mnemonic == null) {
+        throw const TransactionException('Wallet not found. Please log in again.');
+      }
+      final senderKeypair = await Ed25519HDKeyPair.fromMnemonic(mnemonic);
+      
+      final senderPubkey = Ed25519HDPublicKey(senderKeypair.publicKey.bytes);
+      final recipientPubkey = Ed25519HDPublicKey.fromBase58(recipientAddress);
+      final mintPubkey = Ed25519HDPublicKey.fromBase58(AppConstants.usdcMintAddress);
+      
+      final senderAta = await findAssociatedTokenAddress(
+        owner: senderPubkey,
+        mint: mintPubkey,
+      );
+      final recipientAta = await findAssociatedTokenAddress(
+        owner: recipientPubkey,
+        mint: mintPubkey,
+      );
+      
+      final instructions = <Instruction>[];
+      
+      // If we are online, check if recipient ATA exists, if not, create it
+      if (isOnline) {
+        final recipientAtaInfo = await solanaService.getAccountInfo(recipientAta.toBase58());
+        if (recipientAtaInfo == null) {
+          instructions.add(
+            AssociatedTokenAccountInstruction.createAccount(
+              funder: senderPubkey,
+              address: Ed25519HDPublicKey.fromBase58(recipientAta.toBase58()),
+              owner: recipientPubkey,
+              mint: mintPubkey,
+            ),
+          );
+        }
+      } else {
+        // Offline: we must assume the recipient ATA exists, or always try to create it?
+        // Creating an existing ATA throws an error on-chain, but we can't check offline.
+        // For hackathon, if offline, we assume ATA exists. 
+      }
+      
+      // Add memo if present
+      if (memo != null && memo.isNotEmpty) {
+        instructions.add(MemoInstruction(signers: [senderPubkey], memo: memo));
+      }
+      
+      // Add transfer instruction
+      instructions.add(
+        TokenInstruction.transfer(
+          amount: (amountUsdc * 1e6).toInt(),
+          source: Ed25519HDPublicKey.fromBase58(senderAta.toBase58()),
+          destination: Ed25519HDPublicKey.fromBase58(recipientAta.toBase58()),
+          owner: senderPubkey,
+        ),
+      );
 
-      final signedBytes =
-          Uint8List.fromList(utf8.encode(jsonEncode(mockTxPayload)));
+      final message = Message(instructions: instructions);
+      
+      final signedTx = await senderKeypair.signMessage(
+        message: message,
+        recentBlockhash: blockhash,
+      );
+      
+      final signedBytes = Uint8List.fromList(signedTx.toByteArray().toList());
 
       return PaymentIntentModel(
         id: _uuid.v4(),

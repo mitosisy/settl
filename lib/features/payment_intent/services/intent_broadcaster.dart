@@ -148,10 +148,7 @@ class IntentBroadcaster {
         }
 
         // Broadcast the signed transaction
-        // Since we are using mock intents for the demo, we simulate a
-        // successful network broadcast rather than failing on the real network.
-        // await solanaService.sendRawTransaction(intent.signedTransactionBytes);
-        await Future.delayed(const Duration(seconds: 1));
+        await solanaService.sendRawTransaction(intent.signedTransactionBytes);
 
         await updateIntentStatus(intent.id, IntentStatus.confirmed);
         onIntentBroadcast?.call(intent);

@@ -77,7 +77,7 @@ class ScannerNotifier extends Notifier<ScannerState> {
           ),
         );
       } else {
-        state = state.copyWith(error: 'UPI ID not found. Try alice@settl');
+        state = state.copyWith(error: 'UPI ID not found. Try trustcafe@settl');
       }
       return;
     }
@@ -89,9 +89,10 @@ class ScannerNotifier extends Notifier<ScannerState> {
   String? _resolveMockUpiId(String upiId) {
     // Mock Address Book for Hackathon Demo
     final mockRegistry = {
-      'alice@settl': '5ZWj7a1f8tWkjBESHKgrLmXshuXxqeY9sy5qN2Yj4c8z',
-      'bob@settl': '2K9gJb6fQ8y4dD7zT5cLx9G4w9R4L5n2R3f8w1Y3w8f9',
-      'merchant@settl': '8A4E9qY3w8f9D2z4n7Qx2F4A5v8G4w9R4L5n2R3f8w1',
+      'faucet@settl': 'D67ReZBtmq4AxyDXt1iRzWbKL8XMmvLw1LdGvvLZKdRh',
+      'trustcafe@settl': 'Kq5vWMGmH1T2wXUfHb7soHuXz23A8FZgpye27vpcaFA',
+      'quickmart@settl': '9VWg7mWaZqgNrsZE6VZ6jEUjrNkHWWWw9eZZJMEzvFEs',
+      'sketchyvendor@settl': '9HeT589vj2EmvcSYyorBg19j4myTj1kNqVtuT5syfWL7',
     };
     return mockRegistry[upiId.toLowerCase()];
   }

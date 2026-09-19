@@ -10,7 +10,6 @@ import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/core/utils/formatters.dart';
 import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
 import 'package:chain_pay/features/payment_intent/services/intent_signer.dart';
-import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
 import 'package:chain_pay/models/merchant_model.dart';
 import 'package:chain_pay/features/scan_pay/widgets/slide_to_pay_button.dart';
 
@@ -67,8 +66,8 @@ class _ConfirmPayScreenState extends ConsumerState<ConfirmPayScreen> {
         // Trigger a manual flush to try broadcasting immediately
         await broadcaster.manualFlush();
         
-        // For the hackathon demo, deduct the balance visually
-        ref.read(walletProvider.notifier).deductMockBalance(widget.amountUsdc);
+        // For a real transaction, we don't mock the balance deduction anymore.
+        // It will be updated when the home screen refreshes.
       }
 
       if (mounted) {

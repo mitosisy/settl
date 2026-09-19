@@ -167,14 +167,14 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Enter a Solana address or UPI ID (e.g., alice@chainpay)', 
+            Text('Enter a Solana address or UPI ID (e.g., alice@settl)', 
                  style: AppTypography.bodyMedium),
             const SizedBox(height: 16),
             TextField(
               controller: controller,
               style: AppTypography.bodyLarge,
               decoration: const InputDecoration(
-                hintText: 'Address or @chainpay ID',
+                hintText: 'Address or @settl ID',
               ),
             ),
           ],

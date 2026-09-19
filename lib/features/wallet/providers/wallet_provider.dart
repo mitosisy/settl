@@ -49,7 +49,24 @@ class WalletNotifier extends Notifier<WalletState> {
   final _secureStorage = const FlutterSecureStorage();
 
   @override
-  WalletState build() => const WalletState();
+  WalletState build() {
+    try {
+      final box = Hive.box<String>(AppConstants.walletBoxName);
+      final walletJson = box.get('wallet');
+
+      if (walletJson != null) {
+        final wallet = WalletModel.fromJson(
+          jsonDecode(walletJson) as Map<String, dynamic>,
+        );
+        // Refresh balances in the background
+        Future.microtask(refreshBalances);
+        return WalletState(wallet: wallet);
+      }
+    } catch (_) {
+      // Fallback to empty state
+    }
+    return const WalletState();
+  }
 
   /// Checks if a wallet already exists in local storage.
   Future<bool> hasExistingWallet() async {
@@ -62,7 +79,7 @@ class WalletNotifier extends Notifier<WalletState> {
     }
   }
 
-  /// Loads the wallet from local storage.
+  /// Explicitly reloads the wallet from local storage.
   Future<void> loadWallet() async {
     state = state.copyWith(isLoading: true);
 

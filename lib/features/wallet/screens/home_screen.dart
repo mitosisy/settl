@@ -10,6 +10,7 @@ import 'package:chain_pay/features/wallet/widgets/balance_card.dart';
 import 'package:chain_pay/features/wallet/widgets/quick_action_row.dart';
 import 'package:chain_pay/features/wallet/widgets/recent_transactions.dart';
 import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
+import 'package:chain_pay/features/scan_pay/providers/scanner_provider.dart';
 
 /// Main home screen showing balance, actions, and recent transactions.
 class HomeScreen extends ConsumerStatefulWidget {
@@ -34,6 +35,17 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final wallet = ref.watch(walletProvider);
     final queuedCount = ref.watch(queuedIntentCountProvider);
 
+    // Listen for manual entry / search bar resolution
+    ref.listen(scannerProvider, (previous, next) {
+      if (next.merchant != null && !next.isScanning) {
+        context.push('/scan/reputation', extra: next.merchant);
+      } else if (next.error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(next.error!)),
+        );
+      }
+    });
+
     return Scaffold(
       backgroundColor: AppColors.bgDeep,
       appBar: _buildAppBar(context),
@@ -50,6 +62,30 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
+
+              // Search Bar
+              TextField(
+                decoration: InputDecoration(
+                  hintText: 'Search address or @settl ID',
+                  hintStyle: AppTypography.bodyMedium.copyWith(color: AppColors.textMuted),
+                  prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted),
+                  filled: true,
+                  fillColor: AppColors.bgElevated,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    borderSide: BorderSide.none,
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+                style: AppTypography.bodyMedium,
+                textInputAction: TextInputAction.search,
+                onSubmitted: (value) {
+                  if (value.trim().isNotEmpty) {
+                    ref.read(scannerProvider.notifier).processManualEntry(value);
+                  }
+                },
+              ),
+              const SizedBox(height: 24),
 
               // Balance card
               BalanceCard(
@@ -71,8 +107,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onScanPay: () => context.push('/scan'),
                 onReceive: () => context.push('/receive'),
                 onHistory: () => context.push('/history'),
-                onTopUp: () {
-                  // Open devnet faucet or show info
+                onTopUp: () async {
+                  final input = await _showManualEntryDialog(context);
+                  if (input != null && input.trim().isNotEmpty) {
+                    ref.read(scannerProvider.notifier).processManualEntry(input);
+                  }
                 },
               ),
               const SizedBox(height: 32),
@@ -138,6 +177,43 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Future<String?> _showManualEntryDialog(BuildContext context) {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppColors.bgElevated,
+        title: Text('Manual Entry', style: AppTypography.headlineMedium),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Enter a Solana address or UPI ID (e.g., alice@settl)', 
+                 style: AppTypography.bodyMedium),
+            const SizedBox(height: 16),
+            TextField(
+              controller: controller,
+              style: AppTypography.bodyLarge,
+              decoration: const InputDecoration(
+                hintText: 'Address or @settl ID',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Cancel', style: AppTypography.labelLarge.copyWith(color: AppColors.textSecondary)),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+            child: const Text('Continue'),
+          ),
+        ],
+      ),
     );
   }
 }

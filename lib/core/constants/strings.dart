@@ -60,6 +60,7 @@ class Strings {
   static const String transactionCount = 'Transaction count';
   static const String walletAge = 'Wallet age';
   static const String volumeProcessed = 'Volume processed';
+  static const String send = 'Send';
   static const String rugPullFlags = 'Rug pull flags';
   static const String avgSettlementTime = 'Avg settlement time';
   static const String noneDetected = 'None detected';

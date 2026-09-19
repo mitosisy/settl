@@ -43,9 +43,9 @@ class QuickActionRow extends StatelessWidget {
           onTap: onHistory,
         ),
         _QuickActionItem(
-          icon: Icons.arrow_upward_rounded,
-          label: Strings.topUp,
-          onTap: onTopUp,
+          icon: Icons.send_rounded,
+          label: Strings.send,
+          onTap: onTopUp, // We will rename the parameter later or just use it as is
         ),
       ],
     );

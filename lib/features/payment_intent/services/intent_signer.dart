@@ -53,12 +53,19 @@ class IntentSigner {
         blockhash = _cachedBlockhash!;
       }
 
-      // Read mnemonic to reconstruct keypair
-      final mnemonic = await const FlutterSecureStorage().read(key: AppConstants.mnemonicStorageKey);
-      if (mnemonic == null) {
+      // Read private key to reconstruct keypair
+      final privateKeyHex = await const FlutterSecureStorage().read(key: AppConstants.privateKeyStorageKey);
+      if (privateKeyHex == null) {
         throw const TransactionException('Wallet not found. Please log in again.');
       }
-      final senderKeypair = await Ed25519HDKeyPair.fromMnemonic(mnemonic);
+      
+      // Convert hex string back to byte array
+      final List<int> privateKeyBytes = [];
+      for (var i = 0; i < privateKeyHex.length; i += 2) {
+        privateKeyBytes.add(int.parse(privateKeyHex.substring(i, i + 2), radix: 16));
+      }
+      
+      final senderKeypair = await Ed25519HDKeyPair.fromPrivateKeyBytes(privateKey: privateKeyBytes);
       
       final senderPubkey = Ed25519HDPublicKey(senderKeypair.publicKey.bytes);
       final recipientPubkey = Ed25519HDPublicKey.fromBase58(recipientAddress);

@@ -116,6 +116,15 @@ class SolanaService {
     return (result as List).cast<Map<String, dynamic>>();
   }
 
+  /// Fetches parsed transaction details for a given signature.
+  Future<Map<String, dynamic>?> getTransactionDetails(String signature) async {
+    final result = await _rpcCall('getTransaction', [
+      signature,
+      {'encoding': 'jsonParsed', 'maxSupportedTransactionVersion': 0},
+    ]);
+    return result as Map<String, dynamic>?;
+  }
+
   /// Sends a signed transaction to the network.
   ///
   /// [signedTxBase64] is the base64-encoded signed transaction.

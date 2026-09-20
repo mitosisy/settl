@@ -10,6 +10,7 @@ import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/core/utils/formatters.dart';
 import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
 import 'package:chain_pay/features/payment_intent/services/intent_signer.dart';
+import 'package:chain_pay/features/payment_intent/models/payment_intent_model.dart';
 import 'package:chain_pay/models/merchant_model.dart';
 import 'package:chain_pay/features/scan_pay/widgets/slide_to_pay_button.dart';
 
@@ -66,8 +67,13 @@ class _ConfirmPayScreenState extends ConsumerState<ConfirmPayScreen> {
         // Trigger a manual flush to try broadcasting immediately
         await broadcaster.manualFlush();
         
-        // For a real transaction, we don't mock the balance deduction anymore.
-        // It will be updated when the home screen refreshes.
+        // Verify the transaction succeeded
+        final allIntents = await broadcaster.getAllIntents();
+        final updatedIntent = allIntents.firstWhere((i) => i.id == intent.id);
+        
+        if (updatedIntent.status == IntentStatus.failed) {
+          throw Exception('Transaction failed on-chain. Please check your balance or try again.');
+        }
       }
 
       if (mounted) {

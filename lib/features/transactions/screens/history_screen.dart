@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/features/transactions/providers/transactions_provider.dart';
 import 'package:chain_pay/features/wallet/widgets/recent_transactions.dart';
+import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
+import 'package:chain_pay/core/widgets/top_nav_bar.dart';
 
 class HistoryScreen extends ConsumerWidget {
   const HistoryScreen({super.key});
@@ -15,20 +16,16 @@ class HistoryScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final transactionsAsyncValue = ref.watch(transactionsProvider);
 
-    return Scaffold(
-      backgroundColor: AppColors.bgDeep,
-      appBar: AppBar(
-        title: const Text(Strings.history),
-        centerTitle: true,
-      ),
+    return GradientScaffold(
+      appBar: const TopNavBar(isHome: false),
       body: transactionsAsyncValue.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.brandSaffron),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: context.colors.primary),
         ),
         error: (error, stack) => Center(
           child: Text(
             'Failed to load history',
-            style: AppTypography.bodyMedium.copyWith(color: AppColors.brandRed),
+            style: context.typography.bodyMedium?.copyWith(color: context.colors.error),
           ),
         ),
         data: (transactions) {
@@ -40,13 +37,13 @@ class HistoryScreen extends ConsumerWidget {
                   Icon(
                     Icons.receipt_long_rounded,
                     size: 64,
-                    color: AppColors.textMuted,
+                    color: context.colors.onSurface.withValues(alpha: 0.3),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     Strings.emptyTransactions,
-                    style: AppTypography.bodyLarge.copyWith(
-                      color: AppColors.textSecondary,
+                    style: context.typography.bodyLarge?.copyWith(
+                      color: context.colors.onSurface.withValues(alpha: 0.6),
                     ),
                   ),
                 ],
@@ -59,14 +56,19 @@ class HistoryScreen extends ConsumerWidget {
               // ignore: unused_result
               ref.refresh(transactionsProvider);
             },
-            color: AppColors.brandSaffron,
-            backgroundColor: AppColors.bgCard,
+            color: context.colors.primary,
+            backgroundColor: context.colors.surface,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-              child: RecentTransactions(
-                transactions: transactions,
-                onTap: (tx) => context.push('/history/${tx.signature}', extra: tx),
+              padding: const EdgeInsets.only(top: 150, left: 24, right: 24, bottom: 24),
+              child: Column(
+                children: [
+                  RecentTransactions(
+                    transactions: transactions,
+                    onTap: (tx) => context.push('/history/${tx.signature}', extra: tx),
+                  ),
+                  const SizedBox(height: 120), // Padding for floating nav
+                ],
               ),
             ),
           );

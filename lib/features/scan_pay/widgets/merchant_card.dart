@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/theme/app_typography.dart';
 import 'package:chain_pay/core/utils/formatters.dart';
 import 'package:chain_pay/models/merchant_model.dart';
+import 'package:chain_pay/core/widgets/glass_container.dart';
 
 /// Card displaying merchant details (name and truncated wallet address).
 class MerchantCard extends StatelessWidget {
@@ -16,13 +17,8 @@ class MerchantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return GlassContainer(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.bgElevated,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.textMuted.withOpacity(0.2)),
-      ),
       child: Row(
         children: [
           // Avatar placeholder
@@ -30,13 +26,13 @@ class MerchantCard extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.bgCard,
+              color: context.colors.surfaceContainerHighest,
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.textMuted.withOpacity(0.2)),
+              border: Border.all(color: context.colors.onSurface.withValues(alpha: 0.1)),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.storefront_rounded,
-              color: AppColors.textSecondary,
+              color: context.colors.onSurface.withValues(alpha: 0.6),
             ),
           ),
           const SizedBox(width: 16),
@@ -48,14 +44,26 @@ class MerchantCard extends StatelessWidget {
               children: [
                 Text(
                   merchant.displayName,
-                  style: AppTypography.titleLarge,
+                  style: context.typography.titleLarge,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                if (merchant.settlId != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    merchant.settlId!,
+                    style: context.typography.bodyMedium?.copyWith(
+                      color: context.colors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
                 const SizedBox(height: 4),
                 Text(
                   Formatters.truncateAddress(merchant.walletAddress),
-                  style: AppTypography.monoMedium,
+                  style: AppTypography.monoMedium.copyWith(
+                    color: context.colors.onSurface.withValues(alpha: 0.6),
+                  ),
                 ),
               ],
             ),

@@ -1,52 +1,30 @@
 import 'dart:ui';
 
-/// Design tokens for ChainPay's dark-mode fintech aesthetic.
-///
-/// Premium dark-mode fintech for Bharat — Zerodha Kite's clarity
-/// meets cyber-saffron energy. Not Western crypto-bro. Not bland banking.
 class AppColors {
   AppColors._();
 
-  // ─── Backgrounds ───────────────────────────────────────────────
-  /// Near-black blue — primary app background
-  static const Color bgDeep = Color(0xFF080B14);
+  // Primary Brand Accent
+  static const Color brandBlack = Color(0xFF000000);
+  static const Color brandWhite = Color(0xFFFFFFFF);
 
-  /// Card surfaces
-  static const Color bgCard = Color(0xFF111827);
+  // Light Theme Colors
+  static const Color lightBgDeep = Color(0xFFE2E9E6); // Soft greenish-grey from reference
+  static const Color lightBgCard = Color(0xFFF9FAFB);
+  static const Color lightBgElevated = Color(0xFFFFFFFF);
+  static const Color lightTextPrimary = Color(0xFF111827); // Very dark green-grey
+  static const Color lightTextSecondary = Color(0xFF6B7280);
+  static const Color lightTextMuted = Color(0xFF9CA3AF);
+  
+  // Dark Theme Colors
+  static const Color darkBgDeep = Color(0xFF080B14);
+  static const Color darkBgCard = Color(0xFF111827);
+  static const Color darkBgElevated = Color(0xFF1C2535);
+  static const Color darkTextPrimary = Color(0xFFF9FAFB);
+  static const Color darkTextSecondary = Color(0xFF9CA3AF);
+  static const Color darkTextMuted = Color(0xFF4B5563);
 
-  /// Modals, bottom sheets, elevated surfaces
-  static const Color bgElevated = Color(0xFF1C2535);
-
-  // ─── Brand ─────────────────────────────────────────────────────
-  /// Primary CTA, action buttons
-  static const Color brandSaffron = Color(0xFFFF6B1A);
-
-  /// Glow/accent effects
-  static const Color brandGlow = Color(0xFFFF9A4D);
-
-  /// Success states, trusted score ≥70
-  static const Color brandGreen = Color(0xFF10B981);
-
-  /// Warning states, neutral score 40–69
-  static const Color brandAmber = Color(0xFFF59E0B);
-
-  /// Danger states, untrusted score <40
-  static const Color brandRed = Color(0xFFEF4444);
-
-  // ─── Text ──────────────────────────────────────────────────────
-  /// Headings, primary content
-  static const Color textPrimary = Color(0xFFF9FAFB);
-
-  /// Subtitles, labels
-  static const Color textSecondary = Color(0xFF9CA3AF);
-
-  /// Disabled text, hints
-  static const Color textMuted = Color(0xFF4B5563);
-
-  // ─── Solana Accent ─────────────────────────────────────────────
-  /// Network badge, subtle accent
-  static const Color solanaPurple = Color(0xFF9945FF);
-
-  /// Solana brand accent
-  static const Color solanaGreen = Color(0xFF14F195);
+  // Status
+  static const Color greenSuccess = Color(0xFF10B981);
+  static const Color amberWarning = Color(0xFFF59E0B);
+  static const Color redError = Color(0xFFEF4444);
 }

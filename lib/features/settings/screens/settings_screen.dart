@@ -3,10 +3,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:go_router/go_router.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/features/settings/providers/settings_provider.dart';
 import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
+import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
+import 'package:chain_pay/core/widgets/glass_container.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -16,52 +17,70 @@ class SettingsScreen extends ConsumerWidget {
     final settings = ref.watch(settingsProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+    return GradientScaffold(
       appBar: AppBar(
-        title: const Text('Settings'),
+        title: Text('Settings', style: context.typography.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
+        leadingWidth: 72,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 24.0),
+          child: Center(
+            child: GestureDetector(
+              onTap: () => context.pop(),
+              child: GlassContainer(
+                width: 48,
+                height: 48,
+                borderRadius: 24,
+                padding: EdgeInsets.zero,
+                child: Center(
+                  child: Icon(
+                    Icons.arrow_back_rounded,
+                    size: 24,
+                    color: context.colors.onSurface,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
       body: ListView(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.only(top: 120, left: 24, right: 24, bottom: 24),
         children: [
           _SectionHeader(title: 'Network'),
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.bgElevated,
-              borderRadius: BorderRadius.circular(16),
-            ),
+          GlassContainer(
+            padding: EdgeInsets.zero,
             child: SwitchListTile(
-              title: Text('Use Solana Devnet', style: AppTypography.bodyLarge),
+              title: Text('Use Solana Devnet', style: context.typography.bodyLarge),
               subtitle: Text(
                 'Turn off to use Mainnet (Demo only)',
-                style: AppTypography.labelSmall.copyWith(color: AppColors.textSecondary),
+                style: context.typography.labelSmall?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6)),
               ),
               value: settings.isDevnet,
               onChanged: (val) {
                 ref.read(settingsProvider.notifier).setNetwork(val);
               },
-              activeThumbColor: AppColors.brandSaffron,
+              activeThumbColor: context.colors.primary,
+              activeTrackColor: context.colors.primary.withValues(alpha: 0.5),
             ),
           ),
           
           const SizedBox(height: 32),
           
           _SectionHeader(title: 'Appearance'),
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.bgElevated,
-              borderRadius: BorderRadius.circular(16),
-            ),
+          GlassContainer(
+            padding: EdgeInsets.zero,
             child: ListTile(
-              title: Text('Dark Mode', style: AppTypography.bodyLarge),
+              title: Text('Dark Mode', style: context.typography.bodyLarge),
               trailing: Switch(
                 value: settings.themeMode == ThemeMode.dark || 
                        (settings.themeMode == ThemeMode.system && isDark),
                 onChanged: (_) {
                   ref.read(settingsProvider.notifier).toggleThemeMode();
                 },
-                activeThumbColor: AppColors.brandSaffron,
+                activeThumbColor: context.colors.primary,
+                activeTrackColor: context.colors.primary.withValues(alpha: 0.5),
               ),
             ),
           ),
@@ -69,32 +88,29 @@ class SettingsScreen extends ConsumerWidget {
           const SizedBox(height: 32),
           
           _SectionHeader(title: 'Wallet'),
-          Container(
-            decoration: BoxDecoration(
-              color: AppColors.bgElevated,
-              borderRadius: BorderRadius.circular(16),
-            ),
+          GlassContainer(
+            padding: EdgeInsets.zero,
             child: Column(
               children: [
                 ListTile(
                   title: Text(
                     'Reveal Seed Phrase',
-                    style: AppTypography.bodyLarge,
+                    style: context.typography.bodyLarge,
                   ),
-                  trailing: const Icon(Icons.security, color: AppColors.textSecondary),
+                  trailing: Icon(Icons.security, color: context.colors.onSurface.withValues(alpha: 0.6)),
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('Not available in demo mode')),
                     );
                   },
                 ),
-                const Divider(height: 1),
+                Divider(height: 1, color: context.colors.onSurface.withValues(alpha: 0.1)),
                 ListTile(
                   title: Text(
                     'Disconnect Wallet',
-                    style: AppTypography.bodyLarge.copyWith(color: AppColors.brandRed),
+                    style: context.typography.bodyLarge?.copyWith(color: context.colors.error),
                   ),
-                  trailing: const Icon(Icons.logout_rounded, color: AppColors.brandRed),
+                  trailing: Icon(Icons.logout_rounded, color: context.colors.error),
                   onTap: () async {
                     await ref.read(walletProvider.notifier).removeWallet();
                     if (context.mounted) {
@@ -121,8 +137,8 @@ class _SectionHeader extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 12, left: 8),
       child: Text(
         title.toUpperCase(),
-        style: AppTypography.labelMedium.copyWith(
-          color: AppColors.textMuted,
+        style: context.typography.labelMedium?.copyWith(
+          color: context.colors.onSurface.withValues(alpha: 0.3),
           letterSpacing: 1.2,
         ),
       ),

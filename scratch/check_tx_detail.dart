@@ -1,4 +1,3 @@
-import 'package:chain_pay/services/solana_service.dart';
 import 'package:dio/dio.dart';
 
 void main() async {

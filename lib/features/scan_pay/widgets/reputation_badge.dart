@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/models/reputation_model.dart';
 
 /// A small inline badge showing the trust verdict and emoji.
@@ -13,14 +12,14 @@ class ReputationBadge extends StatelessWidget {
 
   final ReputationVerdict verdict;
 
-  Color get _color {
+  Color _color(BuildContext context) {
     switch (verdict) {
       case ReputationVerdict.trusted:
-        return AppColors.brandGreen;
+        return Colors.green;
       case ReputationVerdict.unverified:
-        return AppColors.brandAmber;
+        return Colors.orange;
       case ReputationVerdict.flagged:
-        return AppColors.brandRed;
+        return context.colors.error;
     }
   }
 
@@ -29,9 +28,9 @@ class ReputationBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: _color.withOpacity(0.15),
+        color: _color(context).withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: _color.withOpacity(0.5)),
+        border: Border.all(color: _color(context).withValues(alpha: 0.5)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -40,7 +39,7 @@ class ReputationBadge extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             verdict.label,
-            style: AppTypography.labelMedium.copyWith(color: _color),
+            style: context.typography.labelMedium?.copyWith(color: _color(context)),
           ),
         ],
       ),

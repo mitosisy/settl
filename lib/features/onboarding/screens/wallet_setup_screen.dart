@@ -4,13 +4,13 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
 import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
 import 'package:bip39/bip39.dart' as bip39;
 import 'package:solana/solana.dart';
+import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
 
 class WalletSetupScreen extends ConsumerStatefulWidget {
   const WalletSetupScreen({super.key});
@@ -47,7 +47,9 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
           
           if (mounted) {
             await _requestAirdrop(publicKey);
-            context.go('/home');
+            if (mounted) {
+              context.go('/home');
+            }
           }
         }
       }
@@ -133,19 +135,23 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
     return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.bgElevated,
-        title: Text('Import Wallet', style: AppTypography.headlineMedium),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.1)),
+        ),
+        backgroundColor: context.isDarkMode ? Colors.black : Colors.white,
+        title: Text('Import Wallet', style: context.typography.headlineMedium),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Enter your 12-word seed phrase or a Solana CLI private key array (e.g. [12, 34...]).', 
-                 style: AppTypography.bodyMedium),
+                 style: context.typography.bodyMedium),
             const SizedBox(height: 16),
             TextField(
               controller: controller,
               maxLines: 3,
-              style: AppTypography.bodyLarge,
+              style: context.typography.bodyLarge,
               decoration: const InputDecoration(
                 hintText: 'apple banana cherry... OR [1, 2, 3...]',
               ),
@@ -155,7 +161,7 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel', style: AppTypography.labelLarge.copyWith(color: AppColors.textSecondary)),
+            child: Text('Cancel', style: context.typography.labelLarge?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6))),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(controller.text.trim()),
@@ -171,30 +177,34 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.bgElevated,
-        title: Text('Secret Recovery Phrase', style: AppTypography.headlineMedium),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.1)),
+        ),
+        backgroundColor: context.isDarkMode ? Colors.black : Colors.white,
+        title: Text('Secret Recovery Phrase', style: context.typography.headlineMedium),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Write down these 12 words and keep them safe. Anyone with these words can access your funds.', 
-                 style: AppTypography.bodyMedium.copyWith(color: AppColors.brandRed)),
+                 style: context.typography.bodyMedium?.copyWith(color: context.colors.error)),
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.bgDeep,
+                color: context.colors.surfaceContainerHighest.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.textMuted),
+                border: Border.all(color: context.colors.onSurface.withValues(alpha: 0.3)),
               ),
-              child: Text(mnemonic, style: AppTypography.bodyLarge.copyWith(height: 1.5)),
+              child: Text(mnemonic, style: context.typography.bodyLarge?.copyWith(height: 1.5)),
             ),
           ],
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text('Cancel', style: AppTypography.labelLarge.copyWith(color: AppColors.textSecondary)),
+            child: Text('Cancel', style: context.typography.labelLarge?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6))),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(true),
@@ -207,16 +217,14 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+    return GradientScaffold(
       appBar: AppBar(
         title: const Text(''),
         backgroundColor: Colors.transparent,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
+      body: Padding(
+        padding: const EdgeInsets.only(top: 120, left: 24, right: 24, bottom: 24),
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(),
@@ -226,13 +234,13 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: AppColors.bgElevated,
+                    color: context.isDarkMode ? Colors.white : Colors.black,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.account_balance_wallet_rounded,
                     size: 64,
-                    color: AppColors.brandSaffron,
+                    color: context.isDarkMode ? Colors.black : Colors.white,
                   ),
                 ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
               ),
@@ -242,7 +250,7 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
               // Title
               Text(
                 'Wallet Setup',
-                style: AppTypography.headlineLarge,
+                style: context.typography.headlineLarge,
                 textAlign: TextAlign.center,
               ).animate().fadeIn(duration: 400.ms, delay: 200.ms),
 
@@ -251,8 +259,8 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
               // Subtitle
               Text(
                 'Create a new wallet or import an existing one to get started.',
-                style: AppTypography.bodyLarge.copyWith(
-                  color: AppColors.textSecondary,
+                style: context.typography.bodyLarge?.copyWith(
+                  color: context.colors.onSurface.withValues(alpha: 0.6),
                 ),
                 textAlign: TextAlign.center,
               ).animate().fadeIn(duration: 400.ms, delay: 400.ms),
@@ -261,6 +269,12 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
 
               // Create Wallet Button
               ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                ),
                 onPressed: _isLoading ? null : _createNewWallet,
                 child: _isLoading
                     ? const SizedBox(
@@ -268,7 +282,6 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.bgDeep,
                         ),
                       )
                     : const Text(Strings.createNewWallet),
@@ -278,6 +291,13 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
 
               // Import Wallet Button
               OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                  side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.08)),
+                ),
                 onPressed: _isLoading ? null : _importWallet,
                 child: const Text(Strings.importWallet),
               ).animate().slideY(begin: 0.2, end: 0, duration: 400.ms, delay: 800.ms).fadeIn(delay: 800.ms),
@@ -286,7 +306,6 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
             ],
           ),
         ),
-      ),
     );
   }
 }

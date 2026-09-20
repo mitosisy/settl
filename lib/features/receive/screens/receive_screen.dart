@@ -4,12 +4,12 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
 import 'package:chain_pay/features/receive/widgets/my_qr_card.dart';
 import 'package:chain_pay/services/qr_service.dart';
+import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
 
 class ReceiveScreen extends ConsumerStatefulWidget {
   const ReceiveScreen({super.key});
@@ -30,16 +30,29 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.bgElevated,
-        title: Text('Request Amount', style: AppTypography.titleLarge),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.1)),
+        ),
+        backgroundColor: context.isDarkMode ? Colors.black : Colors.white,
+        title: Text('Request Amount', style: context.typography.titleLarge),
         content: TextField(
           controller: controller,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          style: AppTypography.bodyLarge,
+          style: context.typography.bodyLarge,
           decoration: InputDecoration(
             hintText: 'Enter USDC amount',
             prefixText: '\$ ',
-            prefixStyle: AppTypography.bodyLarge.copyWith(color: AppColors.textSecondary),
+            prefixStyle: context.typography.bodyLarge?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6)),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.08)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.08)),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           ),
           autofocus: true,
         ),
@@ -49,7 +62,7 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
               setState(() => _requestedAmount = null);
               Navigator.pop(context);
             },
-            child: const Text('Clear'),
+            child: Text('Clear', style: TextStyle(color: context.colors.onSurface.withValues(alpha: 0.6))),
           ),
           ElevatedButton(
             onPressed: () {
@@ -76,16 +89,18 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
       amount: _requestedAmount,
     );
 
-    return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+    return GradientScaffold(
       appBar: AppBar(
-        title: const Text(Strings.receivePayment),
+        title: Text(
+          Strings.receivePayment,
+          style: context.typography.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
+      body: Padding(
+        padding: const EdgeInsets.only(top: 120, left: 24, right: 24, bottom: 24),
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 24),
@@ -94,8 +109,12 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
               Center(
                 child: MyQrCard(qrData: qrData)
                     .animate()
-                    .scale(duration: 500.ms, curve: Curves.easeOutBack)
-                    .fadeIn(),
+                    .fadeIn(duration: 100.ms)
+                    .scaleXY(begin: 0.8, end: 1.0, duration: 100.ms, curve: Curves.easeOut)
+                    .then(delay: 50.ms)
+                    .scaleXY(begin: 1.0, end: 1.04, duration: 100.ms, curve: Curves.easeOut)
+                    .then()
+                    .scaleXY(begin: 1.04, end: 1.0, duration: 100.ms, curve: Curves.easeIn),
               ),
               
               const SizedBox(height: 32),
@@ -103,11 +122,11 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
               // Warning text
               Text(
                 'Only send USDC (Solana Devnet) to this address.',
-                style: AppTypography.labelMedium.copyWith(
-                  color: AppColors.brandAmber,
+                style: context.typography.labelMedium?.copyWith(
+                  color: Colors.orange,
                 ),
                 textAlign: TextAlign.center,
-              ).animate().fadeIn(delay: 200.ms),
+              ),
               
               const Spacer(),
               
@@ -120,7 +139,14 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                       ? 'Requesting \$${_requestedAmount!.toStringAsFixed(2)}' 
                       : Strings.requestAmount,
                 ),
-              ).animate().slideY(begin: 0.2, end: 0, duration: 400.ms, delay: 400.ms).fadeIn(delay: 400.ms),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.08)),
+                ),
+              ),
               
               const SizedBox(height: 16),
               
@@ -137,6 +163,13 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                       },
                       icon: const Icon(Icons.copy_rounded),
                       label: const Text(Strings.copyAddress),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.08)),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -150,16 +183,21 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                       },
                       icon: const Icon(Icons.share_rounded),
                       label: const Text(Strings.shareQr),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
                     ),
                   ),
                 ],
-              ).animate().slideY(begin: 0.2, end: 0, duration: 400.ms, delay: 600.ms).fadeIn(delay: 600.ms),
+              ),
               
-              const SizedBox(height: 32),
+              const SizedBox(height: 120),
             ],
           ),
         ),
-      ),
     );
   }
 }

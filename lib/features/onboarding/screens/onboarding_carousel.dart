@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/constants/strings.dart';
+import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
 
 class OnboardingCarousel extends StatefulWidget {
   const OnboardingCarousel({super.key});
@@ -56,8 +56,7 @@ class _OnboardingCarouselState extends State<OnboardingCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+    return GradientScaffold(
       body: SafeArea(
         child: Column(
           children: [
@@ -97,8 +96,8 @@ class _OnboardingCarouselState extends State<OnboardingCarousel> {
                         width: _currentIndex == index ? 24 : 8,
                         decoration: BoxDecoration(
                           color: _currentIndex == index
-                              ? AppColors.brandSaffron
-                              : AppColors.textMuted,
+                              ? context.colors.primary
+                              : context.colors.onSurface.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(4),
                         ),
                       ),
@@ -110,6 +109,12 @@ class _OnboardingCarouselState extends State<OnboardingCarousel> {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
                       onPressed: () {
                         if (_currentIndex < _pages.length - 1) {
                           _pageController.nextPage(
@@ -161,13 +166,13 @@ class _CarouselPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: AppColors.bgElevated,
+              color: context.isDarkMode ? Colors.white : Colors.black,
               shape: BoxShape.circle,
             ),
             child: Icon(
               icon,
               size: 80,
-              color: AppColors.brandSaffron,
+              color: context.isDarkMode ? Colors.black : Colors.white,
             ),
           )
           .animate()
@@ -179,7 +184,7 @@ class _CarouselPage extends StatelessWidget {
           // Title
           Text(
             title,
-            style: AppTypography.headlineLarge,
+            style: context.typography.headlineLarge,
             textAlign: TextAlign.center,
           )
           .animate()
@@ -191,8 +196,8 @@ class _CarouselPage extends StatelessWidget {
           // Body
           Text(
             body,
-            style: AppTypography.bodyLarge.copyWith(
-              color: AppColors.textSecondary,
+            style: context.typography.bodyLarge?.copyWith(
+              color: context.colors.onSurface.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           )

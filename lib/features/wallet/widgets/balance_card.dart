@@ -1,18 +1,13 @@
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
 import 'package:chain_pay/core/utils/formatters.dart';
-import 'package:chain_pay/core/constants/strings.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
+import 'package:chain_pay/core/widgets/glass_container.dart';
 
 /// Glassmorphism balance card showing USDC and SOL balances.
-///
-/// Features frosted glass effect, saffron glow when balance > 0,
-/// truncated address with tap-to-copy, and entrance animation.
 class BalanceCard extends StatelessWidget {
   const BalanceCard({
     super.key,
@@ -29,119 +24,173 @@ class BalanceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(16),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: AppColors.bgCard.withAlpha(153),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: usdcBalance > 0
-                  ? AppColors.brandSaffron.withAlpha(102)
-                  : AppColors.textMuted.withAlpha(38),
-            ),
-            boxShadow: usdcBalance > 0
-                ? [
-                    BoxShadow(
-                      color: AppColors.brandSaffron.withAlpha(51),
-                      blurRadius: 24,
-                    ),
-                  ]
-                : null,
+    final isDark = context.isDarkMode;
+    final innerCardColor = isDark ? Colors.white : Colors.black;
+    final innerTextColor = isDark ? Colors.black : Colors.white;
+    final innerMutedColor = isDark ? Colors.black54 : Colors.white54;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.3),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // USDC label
-              Row(
-                children: [
-                  Container(
-                    width: 24,
-                    height: 24,
-                    decoration: const BoxDecoration(
-                      color: AppColors.brandGreen,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: Text(
-                        '\$',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
+        ],
+      ),
+      child: GlassContainer(
+        borderRadius: 32,
+        padding: const EdgeInsets.all(8),
+        borderOpacity: 0.2,
+        child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Top layer (Glassy with address)
+          Padding(
+            padding: const EdgeInsets.only(left: 16, top: 12, bottom: 12, right: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  Formatters.truncateAddress(walletAddress),
+                  style: context.typography.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          // Inner card
+          Container(
+            decoration: BoxDecoration(
+              color: innerCardColor,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.2),
+                  blurRadius: 24,
+                  offset: const Offset(0, 12),
+                ),
+              ],
+            ),
+            child: Stack(
+              children: [
+                // Gold glowing Solana badge
+                Positioned(
+                  right: 24,
+                  top: 24,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.amber.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.amber.withValues(alpha: 0.2),
+                          blurRadius: 12,
+                          spreadRadius: 2,
                         ),
+                      ],
+                    ),
+                    child: Text(
+                      'Solana',
+                      style: context.typography.labelMedium?.copyWith(
+                        color: isDark ? const Color(0xFF996515) : Colors.amber.shade300,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  Text('USDC', style: AppTypography.labelMedium),
-                ],
-              ),
-              const SizedBox(height: 8),
-
-              // USDC balance
-              isLoading
-                  ? _buildShimmer()
-                  : Text(
-                      Formatters.usdcAmount(usdcBalance),
-                      style: AppTypography.displayLarge,
-                    ),
-              const SizedBox(height: 12),
-
-              // SOL balance
-              Text(
-                'SOL: ${Formatters.solAmount(solBalance)}',
-                style: AppTypography.bodyMedium,
-              ),
-              const SizedBox(height: 12),
-
-              // Wallet address (tap to copy)
-              GestureDetector(
-                onTap: () {
-                  Clipboard.setData(ClipboardData(text: walletAddress));
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(Strings.addressCopied),
-                      duration: const Duration(seconds: 2),
-                    ),
-                  );
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      Formatters.truncateAddress(walletAddress),
-                      style: AppTypography.monoMedium,
-                    ),
-                    const SizedBox(width: 6),
-                    Icon(
-                      Icons.copy_rounded,
-                      size: 14,
-                      color: AppColors.textMuted,
-                    ),
-                  ],
                 ),
-              ),
-            ],
+
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Available Credit',
+                        style: context.typography.bodyMedium?.copyWith(
+                          color: innerMutedColor,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      isLoading
+                          ? _buildShimmer(innerCardColor)
+                          : Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  Formatters.usdcAmount(usdcBalance),
+                                  style: context.typography.displayLarge?.copyWith(
+                                    color: innerTextColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 6),
+                                  child: Text(
+                                    'USDC',
+                                    style: context.typography.titleMedium?.copyWith(
+                                      color: innerMutedColor,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                      const SizedBox(height: 24),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: innerTextColor.withValues(alpha: 0.05),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/icons/sol.svg',
+                              width: 16,
+                              height: 16,
+                              colorFilter: ColorFilter.mode(innerMutedColor, BlendMode.srcIn),
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'SOL Balance: ${solBalance.toStringAsFixed(4)}',
+                              style: context.typography.labelMedium?.copyWith(
+                                color: innerMutedColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
+    ),
     )
-        .animate()
-        .fadeIn(duration: 200.ms)
-        .slideY(begin: 0.1, end: 0, duration: 200.ms, curve: Curves.easeOut);
+    .animate()
+    .fadeIn(duration: 300.ms)
+    .slideY(begin: 0.1, end: 0, duration: 300.ms, curve: Curves.easeOutCubic);
   }
 
-  Widget _buildShimmer() {
+  Widget _buildShimmer(Color innerCardColor) {
     return Container(
       width: 180,
-      height: 40,
+      height: 48,
       decoration: BoxDecoration(
-        color: AppColors.bgElevated,
+        color: innerCardColor == Colors.black ? Colors.white24 : Colors.black12,
         borderRadius: BorderRadius.circular(8),
       ),
     );

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/models/reputation_model.dart';
 
 /// Animated circular progress ring showing the trust score.
@@ -20,14 +19,14 @@ class TrustScoreRing extends StatelessWidget {
   final double size;
   final double strokeWidth;
 
-  Color get _ringColor {
+  Color _ringColor(BuildContext context) {
     switch (verdict) {
       case ReputationVerdict.trusted:
-        return AppColors.brandGreen;
+        return Colors.green;
       case ReputationVerdict.unverified:
-        return AppColors.brandAmber;
+        return Colors.orange;
       case ReputationVerdict.flagged:
-        return AppColors.brandRed;
+        return context.colors.error;
     }
   }
 
@@ -43,7 +42,7 @@ class TrustScoreRing extends StatelessWidget {
           CircularProgressIndicator(
             value: 1.0,
             strokeWidth: strokeWidth,
-            color: AppColors.bgElevated,
+            color: context.colors.surfaceContainerHighest,
           ),
           
           // Animated progress ring
@@ -55,7 +54,7 @@ class TrustScoreRing extends StatelessWidget {
               return CircularProgressIndicator(
                 value: value,
                 strokeWidth: strokeWidth,
-                color: _ringColor,
+                color: _ringColor(context),
                 backgroundColor: Colors.transparent,
                 strokeCap: StrokeCap.round,
               );
@@ -70,7 +69,7 @@ class TrustScoreRing extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: _ringColor.withOpacity(0.2),
+                  color: _ringColor(context).withValues(alpha: 0.2),
                   blurRadius: 20,
                   spreadRadius: 5,
                 ),
@@ -85,15 +84,15 @@ class TrustScoreRing extends StatelessWidget {
             children: [
               Text(
                 score.toString(),
-                style: AppTypography.displayMedium.copyWith(
-                  color: AppColors.textPrimary,
+                style: context.typography.displayMedium?.copyWith(
+                  color: context.colors.onSurface,
                   height: 1.1,
                 ),
               ),
               Text(
                 'Trust Score',
-                style: AppTypography.labelSmall.copyWith(
-                  color: AppColors.textMuted,
+                style: context.typography.labelSmall?.copyWith(
+                  color: context.colors.onSurface.withValues(alpha: 0.3),
                 ),
               ),
             ],

@@ -72,8 +72,10 @@ class ScannerNotifier extends Notifier<ScannerState> {
           isScanning: false,
           merchant: MerchantModel(
             walletAddress: resolvedAddress,
-            name: trimmed,
+            name: trimmed.split('@').first.toUpperCase(),
+            settlId: trimmed,
             label: 'Settl User',
+            amount: 10.0,
           ),
         );
       } else {
@@ -109,7 +111,7 @@ class ScannerNotifier extends Notifier<ScannerState> {
               walletAddress: parsed.recipientAddress,
               label: parsed.label,
               name: parsed.memo,
-              amount: parsed.amount,
+              amount: parsed.amount ?? 10.0,
             ),
           );
           return;
@@ -120,7 +122,7 @@ class ScannerNotifier extends Notifier<ScannerState> {
       if (rawValue.length >= 32 && rawValue.length <= 44 && !rawValue.contains(' ')) {
         state = ScannerState(
           isScanning: false,
-          merchant: MerchantModel(walletAddress: rawValue),
+          merchant: MerchantModel(walletAddress: rawValue, amount: 10.0),
         );
         return;
       }

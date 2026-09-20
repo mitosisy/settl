@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
 import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
 import 'package:chain_pay/features/wallet/widgets/balance_card.dart';
-import 'package:chain_pay/features/wallet/widgets/quick_action_row.dart';
 import 'package:chain_pay/features/wallet/widgets/recent_transactions.dart';
 import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
 import 'package:chain_pay/features/scan_pay/providers/scanner_provider.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
+import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
+import 'package:chain_pay/core/widgets/top_nav_bar.dart';
 
 /// Main home screen showing balance, actions, and recent transactions.
 class HomeScreen extends ConsumerStatefulWidget {
@@ -46,46 +46,38 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       }
     });
 
-    return Scaffold(
-      backgroundColor: AppColors.bgDeep,
-      appBar: _buildAppBar(context),
+    return GradientScaffold(
+      isHome: true,
+      appBar: const TopNavBar(isHome: true),
       body: RefreshIndicator(
-        color: AppColors.brandSaffron,
-        backgroundColor: AppColors.bgCard,
+        color: context.colors.primary,
+        backgroundColor: context.colors.surface,
         onRefresh: () async {
           await ref.read(walletProvider.notifier).refreshBalances();
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.only(top: 150, left: 24, right: 24, bottom: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 16),
-
-              // Search Bar
-              TextField(
-                decoration: InputDecoration(
-                  hintText: 'Search address or @settl ID',
-                  hintStyle: AppTypography.bodyMedium.copyWith(color: AppColors.textMuted),
-                  prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted),
-                  filled: true,
-                  fillColor: AppColors.bgElevated,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(vertical: 16),
+              // Header
+              Text(
+                'Welcome Back!',
+                style: context.typography.displaySmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: -1,
+                  color: context.colors.onSurface,
                 ),
-                style: AppTypography.bodyMedium,
-                textInputAction: TextInputAction.search,
-                onSubmitted: (value) {
-                  if (value.trim().isNotEmpty) {
-                    ref.read(scannerProvider.notifier).processManualEntry(value);
-                  }
-                },
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 8),
+              Text(
+                'Here\'s your account overview',
+                style: context.typography.bodyMedium?.copyWith(
+                  color: context.colors.onSurface.withValues(alpha: 0.6),
+                ),
+              ),
+              const SizedBox(height: 32),
 
               // Balance card
               BalanceCard(
@@ -102,17 +94,59 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 const SizedBox(height: 16),
               ],
 
-              // Quick actions
-              QuickActionRow(
-                onScanPay: () => context.push('/scan'),
-                onReceive: () => context.push('/receive'),
-                onHistory: () => context.push('/history'),
-                onTopUp: () async {
-                  final input = await _showManualEntryDialog(context);
-                  if (input != null && input.trim().isNotEmpty) {
-                    ref.read(scannerProvider.notifier).processManualEntry(input);
-                  }
-                },
+              // Card Actions (Manage / Add Cash)
+              Container(
+                decoration: BoxDecoration(
+                  color: context.isDarkMode ? Colors.white.withValues(alpha: 0.1) : Colors.black.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextButton.icon(
+                        onPressed: () {},
+                        icon: Icon(Icons.add, size: 18, color: context.colors.onSurface),
+                        label: Text(
+                          'Add Cash',
+                          style: context.typography.labelLarge?.copyWith(
+                            color: context.colors.onSurface,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: context.isDarkMode ? Colors.white : Colors.black,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: TextButton.icon(
+                          onPressed: () async {
+                            final input = await _showManualEntryDialog(context);
+                            if (input != null && input.trim().isNotEmpty) {
+                              ref.read(scannerProvider.notifier).processManualEntry(input);
+                            }
+                          },
+                          icon: Icon(Icons.send_rounded, size: 18, color: context.isDarkMode ? Colors.black : Colors.white),
+                          label: Text(
+                            'Send Money',
+                            style: context.typography.labelLarge?.copyWith(
+                              color: context.isDarkMode ? Colors.black : Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 32),
 
@@ -122,7 +156,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 onViewAll: () => context.push('/history'),
                 onTap: (tx) => context.push('/history/${tx.signature}'),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 120), // Bottom padding for floating nav
             ],
           ),
         ),
@@ -130,90 +164,67 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      backgroundColor: AppColors.bgDeep,
-      title: Row(
-        children: [
-          Text(
-            Strings.appName,
-            style: AppTypography.titleLarge.copyWith(
-              color: AppColors.brandSaffron,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: AppColors.solanaPurple.withAlpha(38),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Text(
-              Strings.networkBadge,
-              style: AppTypography.labelSmall.copyWith(
-                color: AppColors.solanaPurple,
-              ),
-            ),
-          ),
-        ],
-      ),
-      actions: [
-        GestureDetector(
-          onTap: () => context.push('/settings'),
-          child: Container(
-            width: 36,
-            height: 36,
-            margin: const EdgeInsets.only(right: 16),
-            decoration: BoxDecoration(
-              color: AppColors.bgElevated,
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.person_rounded,
-              size: 20,
-              color: AppColors.textSecondary,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Future<String?> _showManualEntryDialog(BuildContext context) {
     final controller = TextEditingController();
-    return showDialog<String>(
+    return showGeneralDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.bgElevated,
-        title: Text('Manual Entry', style: AppTypography.headlineMedium),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Enter a Solana address or UPI ID (e.g., alice@settl)', 
-                 style: AppTypography.bodyMedium),
-            const SizedBox(height: 16),
-            TextField(
-              controller: controller,
-              style: AppTypography.bodyLarge,
-              decoration: const InputDecoration(
-                hintText: 'Address or @settl ID',
+      barrierDismissible: true,
+      barrierLabel: 'Dismiss',
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation, secondaryAnimation) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.1)),
+          ),
+          backgroundColor: context.isDarkMode ? Colors.black : Colors.white,
+          title: Text('Send money', style: context.typography.headlineMedium),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Enter a Solana address or UPI ID (e.g., alice@settl)', 
+                   style: context.typography.bodyMedium),
+              const SizedBox(height: 16),
+              TextField(
+                controller: controller,
+                style: context.typography.bodyLarge,
+                decoration: InputDecoration(
+                  hintText: 'Address or @settl ID',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.08)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.08)),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                ),
               ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('Cancel', style: context.typography.labelLarge?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6))),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(controller.text.trim()),
+              child: const Text('Continue'),
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel', style: AppTypography.labelLarge.copyWith(color: AppColors.textSecondary)),
+        );
+      },
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutBack,
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('Continue'),
-          ),
-        ],
-      ),
+          child: child,
+        );
+      },
     );
   }
 }
@@ -230,32 +241,32 @@ class _OfflineQueueBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: AppColors.brandAmber.withAlpha(25),
+        color: Colors.orange.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.brandAmber.withAlpha(77),
+          color: Colors.orange.withValues(alpha: 0.3),
         ),
       ),
       child: Row(
         children: [
-          Icon(
+          const Icon(
             Icons.wifi_off_rounded,
             size: 18,
-            color: AppColors.brandAmber,
+            color: Colors.orange,
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               '$count ${Strings.queuedBanner}',
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.brandAmber,
+              style: context.typography.bodyMedium?.copyWith(
+                color: Colors.orange,
               ),
             ),
           ),
-          Icon(
+          const Icon(
             Icons.chevron_right_rounded,
             size: 18,
-            color: AppColors.brandAmber,
+            color: Colors.orange,
           ),
         ],
       ),

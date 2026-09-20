@@ -3,8 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/models/merchant_model.dart';
 import 'package:chain_pay/models/reputation_model.dart';
@@ -12,6 +11,8 @@ import 'package:chain_pay/features/scan_pay/providers/reputation_provider.dart';
 import 'package:chain_pay/features/scan_pay/widgets/merchant_card.dart';
 import 'package:chain_pay/features/scan_pay/widgets/reputation_badge.dart';
 import 'package:chain_pay/features/scan_pay/widgets/trust_score_ring.dart';
+import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
+import 'package:chain_pay/core/widgets/glass_container.dart';
 
 class ReputationScreen extends ConsumerWidget {
   const ReputationScreen({super.key, required this.merchant});
@@ -23,15 +24,15 @@ class ReputationScreen extends ConsumerWidget {
     final reputationAsyncValue =
         ref.watch(merchantReputationProvider(merchant.walletAddress));
 
-    return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+    return GradientScaffold(
       appBar: AppBar(
-        title: const Text('Verify Merchant'),
+        title: Text('Verify Merchant', style: context.typography.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
       ),
       body: reputationAsyncValue.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.brandSaffron),
+        loading: () => Center(
+          child: CircularProgressIndicator(color: context.colors.primary),
         ),
         error: (error, stack) => Center(
           child: Padding(
@@ -39,14 +40,14 @@ class ReputationScreen extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.error_outline,
-                    color: AppColors.brandRed, size: 48),
+                Icon(Icons.error_outline,
+                    color: context.colors.error, size: 48),
                 const SizedBox(height: 16),
                 Text('Failed to load reputation',
-                    style: AppTypography.titleLarge),
+                    style: context.typography.titleLarge),
                 const SizedBox(height: 8),
                 Text(error.toString(),
-                    style: AppTypography.bodyMedium,
+                    style: context.typography.bodyMedium,
                     textAlign: TextAlign.center),
                 const SizedBox(height: 24),
                 ElevatedButton(
@@ -60,7 +61,7 @@ class ReputationScreen extends ConsumerWidget {
         ),
         data: (reputation) {
           return Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.only(top: 120, left: 24, right: 24, bottom: 24),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -88,23 +89,19 @@ class ReputationScreen extends ConsumerWidget {
                 const SizedBox(height: 16),
                 Text(
                   _getVerdictDescription(reputation.verdict),
-                  style: AppTypography.bodyLarge.copyWith(
-                    color: AppColors.textSecondary,
+                  style: context.typography.bodyLarge?.copyWith(
+                    color: context.colors.onSurface.withValues(alpha: 0.6),
                   ),
                   textAlign: TextAlign.center,
                 ).animate().fadeIn(delay: 800.ms),
                 const SizedBox(height: 32),
 
                 // Detailed metrics as Evidence bullets
-                Container(
+                GlassContainer(
                   padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.bgElevated,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _buildEvidenceList(reputation),
+                    children: _buildEvidenceList(context, reputation),
                   ),
                 ).animate().fadeIn(delay: 1000.ms).slideY(
                     begin: 0.1, end: 0, duration: 400.ms, delay: 1000.ms),
@@ -112,26 +109,40 @@ class ReputationScreen extends ConsumerWidget {
                 const Spacer(),
 
                 // Actions
-                // Actions
                 if (reputation.verdict == ReputationVerdict.flagged)
                   ElevatedButton(
                     onPressed: () => _navigateToAmountEntry(context),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.brandRed.withAlpha(50),
-                      foregroundColor: AppColors.brandRed,
-                      side: const BorderSide(color: AppColors.brandRed),
+                      backgroundColor: context.colors.error,
+                      foregroundColor: context.colors.onError,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
                     ),
                     child: const Text(Strings.riskOverride),
                   ).animate().fadeIn(delay: 1200.ms)
                 else
                   ElevatedButton(
                     onPressed: () => _navigateToAmountEntry(context),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
                     child: const Text(Strings.continueToPay),
                   ).animate().fadeIn(delay: 1200.ms),
 
                 const SizedBox(height: 16),
                 OutlinedButton(
                   onPressed: () => context.pop(), // Go back to scanner
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                  ),
                   child: const Text(Strings.cancel),
                 ).animate().fadeIn(delay: 1200.ms),
               ],
@@ -153,7 +164,7 @@ class ReputationScreen extends ConsumerWidget {
     }
   }
 
-  List<Widget> _buildEvidenceList(ReputationModel rep) {
+  List<Widget> _buildEvidenceList(BuildContext context, ReputationModel rep) {
     final List<Widget> items = [];
     final v = rep.verdict;
 
@@ -161,27 +172,27 @@ class ReputationScreen extends ConsumerWidget {
     if (v == ReputationVerdict.trusted) {
       items.add(_EvidenceRow(
         text: '${rep.txnCount} transactions over ${(rep.walletAgeDays / 30).floor()} months',
-        color: AppColors.brandGreen,
+        color: Colors.green,
       ));
     } else if (v == ReputationVerdict.unverified) {
       items.add(_EvidenceRow(
         text: 'Only ${rep.txnCount} transactions in ${(rep.walletAgeDays / 30).floor()} months',
-        color: AppColors.brandAmber,
+        color: Colors.orange,
       ));
       items.add(const SizedBox(height: 12));
       items.add(_EvidenceRow(
         text: 'Volume history too thin to verify',
-        color: AppColors.brandAmber,
+        color: Colors.orange,
       ));
     } else {
       items.add(_EvidenceRow(
         text: 'Wallet created only ${rep.walletAgeDays} days ago',
-        color: AppColors.brandRed,
+        color: context.colors.error,
       ));
       items.add(const SizedBox(height: 12));
       items.add(_EvidenceRow(
         text: 'Just ${rep.txnCount} transactions on record',
-        color: AppColors.brandRed,
+        color: context.colors.error,
       ));
     }
 
@@ -192,12 +203,12 @@ class ReputationScreen extends ConsumerWidget {
         text: v == ReputationVerdict.trusted 
             ? 'High volume processed, zero rug-pull flags'
             : 'No rug-pull flags detected',
-        color: v == ReputationVerdict.trusted ? AppColors.brandGreen : AppColors.brandAmber,
+        color: v == ReputationVerdict.trusted ? Colors.green : Colors.orange,
       ));
     } else {
       items.add(_EvidenceRow(
         text: '${rep.rugPullFlags} rug-pull flag(s): >80% of balance moved in one txn',
-        color: AppColors.brandRed,
+        color: context.colors.error,
       ));
     }
 
@@ -206,13 +217,13 @@ class ReputationScreen extends ConsumerWidget {
 
   void _navigateToAmountEntry(BuildContext context) {
     if (merchant.amount != null && merchant.amount! > 0) {
-      context.push('/scan/confirm', extra: {
+      context.push('/scan_flow/confirm', extra: {
         'merchant': merchant,
         'amountUsdc': merchant.amount!,
         'memo': merchant.name, // Fallback if name was parsed from memo
       });
     } else {
-      context.push('/scan/amount', extra: merchant);
+      context.push('/scan_flow/amount', extra: merchant);
     }
   }
 }
@@ -245,8 +256,8 @@ class _EvidenceRow extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textPrimary,
+            style: context.typography.bodyMedium?.copyWith(
+              color: context.colors.onSurface,
               height: 1.4,
             ),
           ),

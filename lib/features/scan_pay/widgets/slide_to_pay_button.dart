@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/constants/strings.dart';
+import 'package:chain_pay/core/widgets/glass_container.dart';
 
 /// Slide-to-pay button for confirming transactions.
 class SlideToPayButton extends StatefulWidget {
@@ -56,12 +56,9 @@ class _SlideToPayButtonState extends State<SlideToPayButton> {
         final thumbSize = 56.0;
         final dragDistance = maxWidth - thumbSize;
         
-        return Container(
+        return GlassContainer(
           height: 64,
-          decoration: BoxDecoration(
-            color: AppColors.bgElevated,
-            borderRadius: BorderRadius.circular(32),
-          ),
+          padding: EdgeInsets.zero,
           child: Stack(
             alignment: Alignment.centerLeft,
             children: [
@@ -69,8 +66,8 @@ class _SlideToPayButtonState extends State<SlideToPayButton> {
               Center(
                 child: Text(
                   widget.isLoading ? Strings.broadcasting : Strings.slideToPay,
-                  style: AppTypography.labelLarge.copyWith(
-                    color: AppColors.textSecondary,
+                  style: context.typography.labelLarge?.copyWith(
+                    color: context.colors.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
               ),
@@ -81,7 +78,7 @@ class _SlideToPayButtonState extends State<SlideToPayButton> {
                 width: thumbSize + (_dragValue * dragDistance),
                 height: 64,
                 decoration: BoxDecoration(
-                  color: AppColors.brandSaffron.withOpacity(0.2),
+                  color: context.colors.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(32),
                 ),
               ),
@@ -99,22 +96,22 @@ class _SlideToPayButtonState extends State<SlideToPayButton> {
                     height: thumbSize,
                     margin: const EdgeInsets.all(4),
                     decoration: BoxDecoration(
-                      color: AppColors.brandSaffron,
+                      color: context.colors.primary,
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: widget.isLoading
-                          ? const SizedBox(
+                          ? SizedBox(
                               width: 24,
                               height: 24,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: AppColors.bgDeep,
+                                color: context.colors.onPrimary,
                               ),
                             )
-                          : const Icon(
+                          : Icon(
                               Icons.double_arrow_rounded,
-                              color: AppColors.textPrimary,
+                              color: context.colors.onPrimary,
                             ),
                     ),
                   ),

@@ -3,12 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/constants/app_constants.dart';
 import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/core/utils/formatters.dart';
 import 'package:chain_pay/models/transaction_model.dart';
+import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
+import 'package:chain_pay/core/widgets/glass_container.dart';
 
 class TransactionDetailScreen extends StatelessWidget {
   const TransactionDetailScreen({super.key, required this.transaction});
@@ -18,17 +19,17 @@ class TransactionDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSent = transaction.type == TransactionType.sent;
-    final amountColor = isSent ? AppColors.brandRed : AppColors.brandGreen;
+    final amountColor = isSent ? context.colors.error : Colors.green;
     final amountPrefix = isSent ? '- ' : '+ ';
 
-    return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+    return GradientScaffold(
       appBar: AppBar(
         title: const Text('Transaction Details'),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.only(top: 120, left: 24, right: 24, bottom: 24),
         child: Column(
           children: [
             // Status Icon
@@ -41,25 +42,21 @@ class TransactionDetailScreen extends StatelessWidget {
             // Status Text
             Text(
               transaction.status.displayName,
-              style: AppTypography.titleLarge,
+              style: context.typography.titleLarge,
             ).animate().fadeIn(delay: 200.ms),
             const SizedBox(height: 24),
             
             // Amount
             Text(
               '${amountPrefix}USDC ${Formatters.usdcAmount(transaction.amountUsdc)}',
-              style: AppTypography.displayLarge.copyWith(color: amountColor),
+              style: context.typography.displayLarge?.copyWith(color: amountColor),
             ).animate().slideY(begin: 0.1, end: 0, duration: 400.ms, delay: 300.ms).fadeIn(delay: 300.ms),
             
             const SizedBox(height: 48),
             
             // Details Card
-            Container(
+            GlassContainer(
               padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: AppColors.bgElevated,
-                borderRadius: BorderRadius.circular(16),
-              ),
               child: Column(
                 children: [
                   _DetailRow(
@@ -109,9 +106,11 @@ class TransactionDetailScreen extends StatelessWidget {
                 icon: const Icon(Icons.open_in_new_rounded),
                 label: const Text(Strings.viewOnSolscan),
                 style: TextButton.styleFrom(
-                  foregroundColor: AppColors.brandSaffron,
+                  foregroundColor: context.colors.primary,
                 ),
               ).animate().fadeIn(delay: 700.ms),
+              
+            const SizedBox(height: 120),
           ],
         ),
       ),
@@ -132,16 +131,16 @@ class _StatusIcon extends StatelessWidget {
     switch (status) {
       case TransactionStatus.confirmed:
         icon = Icons.check_circle_rounded;
-        color = AppColors.brandGreen;
+        color = Colors.green;
         break;
       case TransactionStatus.pending:
       case TransactionStatus.queued:
         icon = Icons.schedule_rounded;
-        color = AppColors.solanaPurple;
+        color = context.colors.secondary;
         break;
       case TransactionStatus.failed:
         icon = Icons.cancel_rounded;
-        color = AppColors.brandRed;
+        color = context.colors.error;
         break;
     }
 
@@ -149,7 +148,7 @@ class _StatusIcon extends StatelessWidget {
       width: 64,
       height: 64,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
+        color: color.withValues(alpha: 0.15),
         shape: BoxShape.circle,
       ),
       child: Icon(icon, color: color, size: 32),
@@ -179,8 +178,8 @@ class _DetailRow extends StatelessWidget {
           width: 100,
           child: Text(
             label,
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textSecondary,
+            style: context.typography.bodyMedium?.copyWith(
+              color: context.colors.onSurface.withValues(alpha: 0.6),
             ),
           ),
         ),
@@ -201,18 +200,18 @@ class _DetailRow extends StatelessWidget {
                 Expanded(
                   child: Text(
                     value,
-                    style: AppTypography.bodyMedium.copyWith(
-                      color: AppColors.textPrimary,
+                    style: context.typography.bodyMedium?.copyWith(
+                      color: context.colors.onSurface,
                     ),
                     textAlign: TextAlign.right,
                   ),
                 ),
                 if (copyable) ...[
                   const SizedBox(width: 4),
-                  const Icon(
+                  Icon(
                     Icons.copy_rounded,
                     size: 14,
-                    color: AppColors.textMuted,
+                    color: context.colors.onSurface.withValues(alpha: 0.4),
                   ),
                 ],
               ],

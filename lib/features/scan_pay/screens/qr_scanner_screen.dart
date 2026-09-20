@@ -3,8 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/features/scan_pay/providers/scanner_provider.dart';
 
@@ -30,7 +29,7 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
     ref.listen(scannerProvider, (previous, next) {
       if (next.merchant != null && !next.isScanning) {
         // Go router allows passing extra object
-        context.push('/scan/reputation', extra: next.merchant);
+        context.push('/scan_flow/reputation', extra: next.merchant);
       } else if (next.error != null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(next.error!)),
@@ -53,7 +52,7 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
           // Overlay mask with clear center
           ColorFiltered(
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(0.7),
+              Colors.black.withValues(alpha: 0.7),
               BlendMode.srcOut,
             ),
             child: Stack(
@@ -92,7 +91,7 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                         icon: const Icon(Icons.close_rounded, color: Colors.white),
                         onPressed: () {
                           ref.read(scannerProvider.notifier).reset();
-                          context.pop();
+                          context.go('/home');
                         },
                       ),
                       IconButton(
@@ -108,7 +107,7 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                 // Instructions
                 Text(
                   Strings.scannerOverlay,
-                  style: AppTypography.bodyLarge.copyWith(color: Colors.white),
+                  style: context.typography.bodyLarge?.copyWith(color: Colors.white),
                 ),
                 
                 const SizedBox(height: 32),
@@ -120,7 +119,7 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                     width: 250,
                     decoration: BoxDecoration(
                       border: Border.all(
-                        color: AppColors.brandSaffron.withOpacity(0.5),
+                        color: context.colors.primary.withValues(alpha: 0.5),
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(24),
@@ -142,8 +141,8 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
                     },
                     child: Text(
                       Strings.enterManually,
-                      style: AppTypography.labelLarge.copyWith(
-                        color: AppColors.textSecondary,
+                      style: context.typography.labelLarge?.copyWith(
+                        color: Colors.white70,
                       ),
                     ),
                   ),
@@ -161,18 +160,22 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
     return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppColors.bgElevated,
-        title: Text('Manual Entry', style: AppTypography.headlineMedium),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.1)),
+        ),
+        backgroundColor: context.isDarkMode ? Colors.black : Colors.white,
+        title: Text('Manual Entry', style: context.typography.headlineMedium),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Enter a Solana address or UPI ID (e.g., alice@settl)', 
-                 style: AppTypography.bodyMedium),
+                 style: context.typography.bodyMedium),
             const SizedBox(height: 16),
             TextField(
               controller: controller,
-              style: AppTypography.bodyLarge,
+              style: context.typography.bodyLarge,
               decoration: const InputDecoration(
                 hintText: 'Address or @settl ID',
               ),
@@ -182,7 +185,7 @@ class _QrScannerScreenState extends ConsumerState<QrScannerScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel', style: AppTypography.labelLarge.copyWith(color: AppColors.textSecondary)),
+            child: Text('Cancel', style: context.typography.labelLarge?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6))),
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(context).pop(controller.text.trim()),

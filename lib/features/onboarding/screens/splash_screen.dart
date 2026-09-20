@@ -3,11 +3,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/constants/app_constants.dart';
 import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/features/onboarding/providers/onboarding_provider.dart';
+import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -49,31 +49,17 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgDeep,
+    return GradientScaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // App Logo / Icon (mock)
-            Container(
+            Image.asset(
+              'assets/splash/onboard_logo.png',
               width: 120,
               height: 120,
-              decoration: BoxDecoration(
-                color: AppColors.bgElevated,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.brandSaffron.withOpacity(0.3),
-                    blurRadius: 40,
-                  ),
-                ],
-              ),
-              child: const Icon(
-                Icons.currency_bitcoin_rounded, // Temporary icon
-                size: 64,
-                color: AppColors.brandSaffron,
-              ),
+              fit: BoxFit.contain,
             )
                 .animate()
                 .scale(duration: 600.ms, curve: Curves.easeOutBack)
@@ -84,8 +70,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             // App Name
             Text(
               Strings.appName,
-              style: AppTypography.displayLarge.copyWith(
-                color: AppColors.brandSaffron,
+              style: context.typography.displayLarge?.copyWith(
+                color: context.colors.primary,
+                fontWeight: FontWeight.w900,
               ),
             )
                 .animate()
@@ -97,8 +84,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             // Tagline
             Text(
               Strings.tagline,
-              style: AppTypography.titleMedium.copyWith(
-                color: AppColors.textSecondary,
+              style: context.typography.titleMedium?.copyWith(
+                color: context.colors.onSurface.withValues(alpha: 0.6),
               ),
             )
                 .animate()

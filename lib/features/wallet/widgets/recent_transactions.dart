@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:chain_pay/core/theme/app_colors.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
+import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/utils/formatters.dart';
 import 'package:chain_pay/core/constants/strings.dart';
 import 'package:chain_pay/models/transaction_model.dart';
@@ -30,14 +29,15 @@ class RecentTransactions extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(Strings.recent, style: AppTypography.headlineMedium),
+            Text(Strings.recent, style: context.typography.headlineMedium),
             if (transactions.isNotEmpty)
               GestureDetector(
                 onTap: onViewAll,
                 child: Text(
                   Strings.viewAll,
-                  style: AppTypography.labelLarge.copyWith(
-                    color: AppColors.brandSaffron,
+                  style: context.typography.labelLarge?.copyWith(
+                    color: context.colors.primary,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -47,7 +47,7 @@ class RecentTransactions extends StatelessWidget {
 
         // Transaction list or empty state
         if (transactions.isEmpty)
-          _buildEmptyState()
+          _buildEmptyState(context)
         else
           ...transactions.asMap().entries.map((entry) {
             return _TransactionTile(
@@ -65,7 +65,7 @@ class RecentTransactions extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 48),
       child: Column(
@@ -73,13 +73,13 @@ class RecentTransactions extends StatelessWidget {
           Icon(
             Icons.receipt_long_rounded,
             size: 48,
-            color: AppColors.textMuted,
+            color: context.colors.onSurface.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           Text(
             Strings.emptyTransactions,
-            style: AppTypography.bodyMedium.copyWith(
-              color: AppColors.textMuted,
+            style: context.typography.bodyMedium?.copyWith(
+              color: context.colors.onSurface.withValues(alpha: 0.5),
             ),
           ),
         ],
@@ -101,7 +101,7 @@ class _TransactionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isSent = transaction.type == TransactionType.sent;
-    final amountColor = isSent ? AppColors.brandRed : AppColors.brandGreen;
+    final amountColor = isSent ? context.colors.error : Colors.green;
     final amountPrefix = isSent ? '- ' : '+ ';
     final directionIcon = isSent
         ? Icons.arrow_upward_rounded
@@ -110,11 +110,11 @@ class _TransactionTile extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: AppColors.textMuted.withAlpha(25),
+              color: context.colors.onSurface.withValues(alpha: 0.1),
               width: 0.5,
             ),
           ),
@@ -123,15 +123,15 @@ class _TransactionTile extends StatelessWidget {
           children: [
             // Direction icon
             Container(
-              width: 40,
-              height: 40,
+              width: 48,
+              height: 48,
               decoration: BoxDecoration(
-                color: amountColor.withAlpha(25),
+                color: amountColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(directionIcon, color: amountColor, size: 20),
+              child: Icon(directionIcon, color: amountColor, size: 24),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 16),
 
             // Name and time
             Expanded(
@@ -142,12 +142,14 @@ class _TransactionTile extends StatelessWidget {
                     Formatters.truncateAddress(
                       isSent ? transaction.toAddress : transaction.fromAddress,
                     ),
-                    style: AppTypography.titleMedium,
+                    style: context.typography.titleMedium?.copyWith(fontWeight: FontWeight.w600),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 4),
                   Text(
                     Formatters.relativeTime(transaction.timestamp),
-                    style: AppTypography.labelSmall,
+                    style: context.typography.labelSmall?.copyWith(
+                      color: context.colors.onSurface.withValues(alpha: 0.6)
+                    ),
                   ),
                 ],
               ),
@@ -159,12 +161,12 @@ class _TransactionTile extends StatelessWidget {
               children: [
                 Text(
                   '${amountPrefix}USDC ${Formatters.usdcAmount(transaction.amountUsdc)}',
-                  style: AppTypography.bodyMedium.copyWith(
+                  style: context.typography.bodyLarge?.copyWith(
                     color: amountColor,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 4),
                 _StatusChip(status: transaction.status),
               ],
             ),
@@ -181,17 +183,18 @@ class _StatusChip extends StatelessWidget {
 
   final TransactionStatus status;
 
-  Color get _color {
+  Color _getColor(BuildContext context) {
     return switch (status) {
-      TransactionStatus.confirmed => AppColors.brandGreen,
-      TransactionStatus.pending => AppColors.brandAmber,
-      TransactionStatus.queued => AppColors.solanaPurple,
-      TransactionStatus.failed => AppColors.brandRed,
+      TransactionStatus.confirmed => Colors.green,
+      TransactionStatus.pending => Colors.orange,
+      TransactionStatus.queued => context.colors.secondary,
+      TransactionStatus.failed => context.colors.error,
     };
   }
 
   @override
   Widget build(BuildContext context) {
+    final color = _getColor(context);
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -199,14 +202,14 @@ class _StatusChip extends StatelessWidget {
           width: 6,
           height: 6,
           decoration: BoxDecoration(
-            color: _color,
+            color: color,
             shape: BoxShape.circle,
           ),
         ),
         const SizedBox(width: 4),
         Text(
           status.displayName,
-          style: AppTypography.labelSmall.copyWith(color: _color),
+          style: context.typography.labelSmall?.copyWith(color: color),
         ),
       ],
     );

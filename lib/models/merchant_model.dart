@@ -5,6 +5,7 @@ class MerchantModel {
     this.name,
     this.label,
     this.amount,
+    this.settlId,
   });
 
   /// Merchant's Solana wallet address.
@@ -19,6 +20,9 @@ class MerchantModel {
   /// Requested amount from the QR code (if any).
   final double? amount;
 
+  /// The unique settl ID (e.g., alice@settl) if available.
+  final String? settlId;
+
   /// Returns the best display name available.
   String get displayName => name ?? label ?? walletAddress;
 
@@ -27,6 +31,7 @@ class MerchantModel {
         'name': name,
         'label': label,
         'amount': amount,
+        'settlId': settlId,
       };
 
   factory MerchantModel.fromJson(Map<String, dynamic> json) => MerchantModel(
@@ -34,5 +39,6 @@ class MerchantModel {
         name: json['name'] as String?,
         label: json['label'] as String?,
         amount: (json['amount'] as num?)?.toDouble(),
+        settlId: json['settlId'] as String?,
       );
 }

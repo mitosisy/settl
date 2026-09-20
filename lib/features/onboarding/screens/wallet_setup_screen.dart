@@ -76,11 +76,14 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
   }
 
   Future<void> _importWallet() async {
-    final input = await _showImportDialog(context);
-    if (input != null && input.trim().isNotEmpty) {
+    final result = await _showImportDialog(context);
+    if (result != null) {
+      final phraseOrKey = result.$1;
+      final useRawSeed = result.$2;
+
+      if (phraseOrKey.isEmpty) return;
       setState(() => _isLoading = true);
       try {
-        final phraseOrKey = input.trim();
         String publicKey;
         String privateKeyHex;
         String storedMnemonic = '';
@@ -98,8 +101,14 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
           publicKey = keypair.address;
           storedMnemonic = 'Imported via Private Key';
         } else {
-          // Standard BIP39 Seed Phrase
-          final keypair = await Ed25519HDKeyPair.fromMnemonic(phraseOrKey);
+          // Mnemonic phrase
+          Ed25519HDKeyPair keypair;
+          if (useRawSeed) {
+            final seed = bip39.mnemonicToSeed(phraseOrKey);
+            keypair = await Ed25519HDKeyPair.fromPrivateKeyBytes(privateKey: seed.sublist(0, 32));
+          } else {
+            keypair = await Ed25519HDKeyPair.fromMnemonic(phraseOrKey);
+          }
           final extracted = await keypair.extract();
           privateKeyHex = extracted.bytes.map((e) => e.toRadixString(16).padLeft(2, '0')).join();
           publicKey = keypair.address;
@@ -130,53 +139,84 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
     }
   }
 
-  Future<String?> _showImportDialog(BuildContext context) {
+  Future<(String, bool)?> _showImportDialog(BuildContext context) {
     final controller = TextEditingController();
-    return showDialog<String>(
+    bool useRawSeed = false;
+
+    return showGeneralDialog<(String, bool)>(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.1)),
-        ),
-        backgroundColor: context.isDarkMode ? Colors.black : Colors.white,
-        title: Text('Import Wallet', style: context.typography.headlineMedium),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Enter your 12-word seed phrase or a Solana CLI private key array (e.g. [12, 34...]).', 
-                 style: context.typography.bodyMedium),
-            const SizedBox(height: 16),
-            TextField(
-              controller: controller,
-              maxLines: 3,
-              style: context.typography.bodyLarge,
-              decoration: const InputDecoration(
-                hintText: 'apple banana cherry... OR [1, 2, 3...]',
-              ),
+      barrierDismissible: true,
+      barrierLabel: 'Dismiss',
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation, secondaryAnimation) => StatefulBuilder(
+        builder: (context, setState) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.1)),
             ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text('Cancel', style: context.typography.labelLarge?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6))),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('Import'),
-          ),
-        ],
+            backgroundColor: context.isDarkMode ? Colors.black : Colors.white,
+            title: Text('Import Wallet', style: context.typography.headlineMedium),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Enter your 12-word seed phrase or a Solana CLI private key array (e.g. [12, 34...]).', 
+                     style: context.typography.bodyMedium),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: controller,
+                  maxLines: 3,
+                  style: context.typography.bodyLarge,
+                  decoration: const InputDecoration(
+                    hintText: 'apple banana cherry... OR [1, 2, 3...]',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                CheckboxListTile(
+                  value: useRawSeed,
+                  onChanged: (val) {
+                    setState(() => useRawSeed = val ?? false);
+                  },
+                  title: Text('Use Solana CLI Derivation (Raw Seed)', style: context.typography.bodySmall),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  visualDensity: VisualDensity.compact,
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text('Cancel', style: context.typography.labelLarge?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6))),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.of(context).pop((controller.text.trim(), useRawSeed)),
+                child: const Text('Import'),
+              ),
+            ],
+          );
+        }
       ),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutBack,
+          ),
+          child: child,
+        );
+      },
     );
   }
 
   Future<bool?> _showSeedPhraseDialog(BuildContext context, String mnemonic) {
-    return showDialog<bool>(
+    return showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
+      barrierLabel: 'Dismiss',
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (context, animation, secondaryAnimation) => AlertDialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
           side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.1)),
@@ -212,6 +252,15 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
           ),
         ],
       ),
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        return ScaleTransition(
+          scale: CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutBack,
+          ),
+          child: child,
+        );
+      },
     );
   }
 

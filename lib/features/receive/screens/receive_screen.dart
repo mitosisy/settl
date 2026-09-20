@@ -121,8 +121,8 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
               const SizedBox(height: 16),
               
               Text(
-                ref.watch(identityServiceProvider).resolvePubKeyToSettlId(address) ?? '${address.substring(0, 4)}...${address.substring(address.length - 4)}',
-                style: context.typography.headlineMedium?.copyWith(
+                ref.watch(identityServiceProvider).resolvePubKeyToSettlId(address) ?? 'anon@settl',
+                style: context.typography.titleLarge?.copyWith(
                   color: context.colors.primary,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1,

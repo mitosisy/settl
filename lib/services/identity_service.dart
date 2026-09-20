@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:chain_pay/models/identity_model.dart';
 
@@ -7,6 +8,10 @@ class IdentityService {
   final Map<String, String> _pubKeyToSettlId = {};
 
   bool _isLoaded = false;
+
+  IdentityService() {
+    loadDirectory();
+  }
 
   /// Loads the directory JSON from assets and builds O(1) lookup maps.
   Future<void> loadDirectory() async {
@@ -20,24 +25,23 @@ class IdentityService {
         final List<dynamic> identities = data['identities'];
         for (final item in identities) {
           final model = IdentityModel.fromJson(item);
-          _settlIdToPubKey[model.settlId] = model.pubKey;
-          _pubKeyToSettlId[model.pubKey] = model.settlId;
+          _settlIdToPubKey[model.settlId.trim()] = model.pubKey.trim();
+          _pubKeyToSettlId[model.pubKey.trim()] = model.settlId.trim();
         }
       }
       _isLoaded = true;
     } catch (e) {
       // In a production app, handle missing asset or parsing errors gracefully.
-      print('Error loading directory: $e');
+      debugPrint('Error loading directory: $e');
     }
   }
 
   /// Returns the public key for a given @settl ID.
   String? resolveSettlIdToPubKey(String settlId) {
-    return _settlIdToPubKey[settlId];
+    return _settlIdToPubKey[settlId.trim()];
   }
 
-  /// Returns the @settl ID for a given public key.
   String? resolvePubKeyToSettlId(String pubKey) {
-    return _pubKeyToSettlId[pubKey];
+    return _pubKeyToSettlId[pubKey.trim()];
   }
 }

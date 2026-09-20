@@ -56,7 +56,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           await ref.read(walletProvider.notifier).refreshBalances();
         },
         child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
           padding: const EdgeInsets.only(top: 135, left: 24, right: 24, bottom: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

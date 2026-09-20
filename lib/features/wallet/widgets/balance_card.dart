@@ -1,4 +1,4 @@
-
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -29,18 +29,27 @@ class BalanceCard extends ConsumerStatefulWidget {
 }
 
 class _BalanceCardState extends ConsumerState<BalanceCard> {
+  final GlobalKey _cardKey = GlobalKey();
   double _tiltX = 0.0;
   double _tiltY = 0.0;
+  bool _isDragging = false;
 
-  void _updateTilt(Offset localPosition, Size size) {
+  void _updateTilt(Offset globalPosition) {
+    final renderBox = _cardKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+    
+    final size = renderBox.size;
+    final localPosition = renderBox.globalToLocal(globalPosition);
+    
     final centerX = size.width / 2;
     final centerY = size.height / 2;
     final dx = ((localPosition.dx - centerX) / centerX).clamp(-1.0, 1.0);
     final dy = ((localPosition.dy - centerY) / centerY).clamp(-1.0, 1.0);
 
     setState(() {
-      _tiltY = dx * 0.15;
-      _tiltX = -dy * 0.15;
+      _tiltY = -dx * 0.15;
+      _tiltX = dy * 0.15;
+      _isDragging = true;
     });
   }
 
@@ -48,6 +57,13 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
     setState(() {
       _tiltX = 0.0;
       _tiltY = 0.0;
+    });
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted && _tiltX == 0.0 && _tiltY == 0.0) {
+        setState(() {
+          _isDragging = false;
+        });
+      }
     });
   }
 
@@ -58,14 +74,46 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
     final innerTextColor = isDark ? Colors.black : Colors.white;
     final innerMutedColor = isDark ? Colors.black54 : Colors.white54;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return Listener(
-          onPointerDown: (event) => _updateTilt(event.localPosition, constraints.biggest),
-          onPointerMove: (event) => _updateTilt(event.localPosition, constraints.biggest),
-          onPointerUp: (_) => _resetTilt(),
-          onPointerCancel: (_) => _resetTilt(),
-          child: TweenAnimationBuilder<double>(
+    return GestureDetector(
+      onPanDown: (details) => _updateTilt(details.globalPosition),
+      onPanUpdate: (details) => _updateTilt(details.globalPosition),
+      onPanEnd: (_) => _resetTilt(),
+      onPanCancel: () => _resetTilt(),
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Fixed background glow (Always visible, peeping from top part of card)
+          Positioned(
+            top: 40,
+            left: 60,
+            right: 60,
+            height: 100,
+            child: AnimatedOpacity(
+              opacity: _isDragging ? 1.0 : 0.0,
+              duration: const Duration(milliseconds: 500),
+              child: ImageFiltered(
+                imageFilter: ImageFilter.blur(sigmaX: 50, sigmaY: 50),
+                child: Container(
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Color(0xFF14F195),
+                      Color(0xFF9945FF),
+                      Color(0xFF14F195),
+                      Color(0xFF9945FF),
+                      Color(0xFF14F195),
+                    ],
+                  ),
+                ),
+              ),
+              ),
+            ),
+          ),
+          
+          // Tiltable Card
+          TweenAnimationBuilder<double>(
             duration: const Duration(milliseconds: 200),
             curve: Curves.easeOut,
             tween: Tween(begin: 0, end: _tiltX),
@@ -87,21 +135,26 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
                 child: child,
               );
             },
-            child: Container(
+            child: AnimatedContainer(
+              key: _cardKey,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeOut,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(32),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
-                    blurRadius: 30,
-                    offset: const Offset(0, 15),
+                    color: Colors.black.withValues(alpha: _isDragging ? 0.0 : 0.3),
+                    blurRadius: _isDragging ? 0 : 30,
+                    offset: Offset(0, _isDragging ? 0 : 15),
                   ),
                 ],
               ),
               child: GlassContainer(
+                disableBlur: _isDragging,
                 borderRadius: 32,
                 padding: const EdgeInsets.all(8),
                 borderOpacity: 0.2,
+                opacity: 0.1,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -112,8 +165,9 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            ref.read(identityServiceProvider).resolvePubKeyToSettlId(widget.walletAddress) ?? 'anon@settl',
+                            ref.watch(identityServiceProvider).resolvePubKeyToSettlId(widget.walletAddress) ?? 'anon@settl',
                             style: context.typography.bodyMedium?.copyWith(
+                              color: context.colors.onSurface.withValues(alpha: 0.5),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -142,27 +196,38 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
                       ),
                       child: Stack(
                         children: [
-                          // Gold glowing Solana badge
+                          // Solana badge
                           Positioned(
                             right: 24,
                             top: 24,
                             child: Container(
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
-                                color: Colors.amber.withValues(alpha: 0.1),
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFF9945FF), Color(0xFF14F195)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
                                 borderRadius: BorderRadius.circular(12),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.amber.withValues(alpha: 0.2),
+                                    color: const Color(0xFF9945FF).withValues(alpha: 0.5),
                                     blurRadius: 12,
-                                    spreadRadius: 2,
+                                    spreadRadius: 1,
+                                    offset: const Offset(-2, 2),
+                                  ),
+                                  BoxShadow(
+                                    color: const Color(0xFF14F195).withValues(alpha: 0.5),
+                                    blurRadius: 12,
+                                    spreadRadius: 1,
+                                    offset: const Offset(2, 2),
                                   ),
                                 ],
                               ),
                               child: Text(
                                 'Solana',
                                 style: context.typography.labelMedium?.copyWith(
-                                  color: isDark ? const Color(0xFF996515) : Colors.amber.shade300,
+                                  color: isDark ? Colors.black : Colors.white,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -211,7 +276,7 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
                                 Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                                   decoration: BoxDecoration(
-                                    color: innerTextColor.withValues(alpha: 0.12),
+                                    color: innerTextColor.withValues(alpha: isDark ? 0.05 : 0.12),
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Row(
@@ -245,8 +310,8 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
               ),
             ),
           ),
-        );
-      },
+        ],
+      ),
     )
     .animate()
     .fadeIn(duration: 300.ms)

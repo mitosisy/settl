@@ -57,8 +57,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             // App Logo / Icon (mock)
             Image.asset(
               'assets/splash/onboard_logo.png',
-              width: 120,
-              height: 120,
+              width: 180,
+              height: 180,
               fit: BoxFit.contain,
             )
                 .animate()

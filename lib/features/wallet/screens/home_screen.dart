@@ -11,6 +11,7 @@ import 'package:chain_pay/features/scan_pay/providers/scanner_provider.dart';
 import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
 import 'package:chain_pay/core/widgets/top_nav_bar.dart';
+import 'package:chain_pay/features/transactions/providers/transactions_provider.dart';
 
 /// Main home screen showing balance, actions, and recent transactions.
 class HomeScreen extends ConsumerStatefulWidget {
@@ -34,6 +35,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget build(BuildContext context) {
     final wallet = ref.watch(walletProvider);
     final queuedCount = ref.watch(queuedIntentCountProvider);
+    final transactionsAsync = ref.watch(transactionsProvider);
 
     // Listen for manual entry / search bar resolution
     ref.listen(scannerProvider, (previous, next) {
@@ -51,8 +53,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: const TopNavBar(isHome: true),
       body: RefreshIndicator(
         color: context.colors.primary,
-        backgroundColor: context.colors.surface,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
         onRefresh: () async {
+          ref.invalidate(transactionsProvider);
           await ref.read(walletProvider.notifier).refreshBalances();
         },
         child: SingleChildScrollView(
@@ -152,9 +156,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
               // Recent transactions
               RecentTransactions(
-                transactions: const [], // TODO: Connect to real data
+                transactions: transactionsAsync.value?.take(3).toList() ?? [],
                 onViewAll: () => context.push('/history'),
-                onTap: (tx) => context.push('/history/${tx.signature}'),
+                onTap: (tx) => context.push('/history/${tx.signature}', extra: tx),
               ),
               const SizedBox(height: 120), // Bottom padding for floating nav
             ],

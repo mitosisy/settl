@@ -46,13 +46,13 @@ void main() async {
         intentBroadcasterProvider.overrideWithValue(intentBroadcaster),
         identityServiceProvider.overrideWithValue(identityService),
       ],
-      child: const ChainPayApp(),
+      child: const SettlApp(),
     ),
   );
 }
 
-class ChainPayApp extends ConsumerWidget {
-  const ChainPayApp({super.key});
+class SettlApp extends ConsumerWidget {
+  const SettlApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

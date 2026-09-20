@@ -1,4 +1,4 @@
-/// All user-facing strings for ChainPay.
+/// All user-facing strings for Settl.
 ///
 /// Centralised here to avoid hardcoded strings in UI widgets.
 class Strings {

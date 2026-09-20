@@ -1,4 +1,4 @@
-/// Base exception hierarchy for ChainPay.
+/// Base exception hierarchy for Settl.
 ///
 /// All service-level errors should throw one of these typed exceptions
 /// so that the UI can handle them via Riverpod's `AsyncValue.error`.

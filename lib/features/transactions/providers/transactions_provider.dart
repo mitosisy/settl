@@ -9,7 +9,7 @@ import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
 /// In a real app, this would query Solscan API or a dedicated indexing backend
 /// to get parsed USDC transactions, rather than just raw signatures.
 /// For the demo, we return an empty list or mock data if we can't parse it.
-final transactionsProvider = FutureProvider.autoDispose<List<TransactionModel>>((ref) async {
+final transactionsProvider = FutureProvider<List<TransactionModel>>((ref) async {
   final walletState = ref.watch(walletProvider);
   final address = walletState.address;
   

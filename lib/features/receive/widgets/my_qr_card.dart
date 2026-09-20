@@ -29,18 +29,38 @@ class MyQrCard extends StatelessWidget {
           ),
         ],
       ),
-      child: QrImageView(
-        data: qrData,
-        version: QrVersions.auto,
-        size: size,
-        backgroundColor: Colors.white,
-        eyeStyle: const QrEyeStyle(
-          eyeShape: QrEyeShape.square,
-          color: Colors.black,
-        ),
-        dataModuleStyle: const QrDataModuleStyle(
-          dataModuleShape: QrDataModuleShape.square,
-          color: Colors.black,
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            QrImageView(
+              data: qrData,
+              version: QrVersions.auto,
+              errorCorrectionLevel: QrErrorCorrectLevel.H,
+              size: size,
+              backgroundColor: Colors.white,
+              eyeStyle: const QrEyeStyle(
+                eyeShape: QrEyeShape.square,
+                color: Colors.black,
+              ),
+              dataModuleStyle: const QrDataModuleStyle(
+                dataModuleShape: QrDataModuleShape.square,
+                color: Colors.black,
+              ),
+            ),
+            Container(
+              width: 52,
+              height: 52,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+              ),
+              padding: const EdgeInsets.all(6),
+              child: Image.asset('assets/icons/settl_qr_logo.png'),
+            ),
+          ],
         ),
       ),
     );

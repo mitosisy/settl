@@ -1,4 +1,4 @@
-/// Input validation utilities for ChainPay.
+/// Input validation utilities for Settl.
 class Validators {
   Validators._();
 

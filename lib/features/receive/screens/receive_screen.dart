@@ -190,8 +190,8 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                     child: ElevatedButton.icon(
                       onPressed: () {
                         Share.share(
-                          'Pay me via ChainPay (Solana): $qrData',
-                          subject: 'ChainPay Payment Request',
+                          'Pay me via Settl (Solana): $qrData',
+                          subject: 'Settl Payment Request',
                         );
                       },
                       icon: const Icon(Icons.share_rounded),

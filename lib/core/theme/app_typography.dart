@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Typography system for ChainPay.
+/// Typography system for Settl.
 ///
 /// - Headlines/Display: Inter Bold — tight tracking, confident feel
 /// - Body/Labels: Inter Regular/Medium — sentence case, never all-caps

@@ -28,17 +28,12 @@ class SettingsScreen extends ConsumerWidget {
           child: Center(
             child: GestureDetector(
               onTap: () => context.pop(),
-              child: GlassContainer(
-                width: 48,
-                height: 48,
-                borderRadius: 24,
-                padding: EdgeInsets.zero,
-                child: Center(
-                  child: Icon(
-                    Icons.arrow_back_rounded,
-                    size: 24,
-                    color: context.colors.onSurface,
-                  ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  Icons.arrow_back_rounded,
+                  size: 24,
+                  color: context.colors.onSurface,
                 ),
               ),
             ),
@@ -112,9 +107,55 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                   trailing: Icon(Icons.logout_rounded, color: context.colors.error),
                   onTap: () async {
-                    await ref.read(walletProvider.notifier).removeWallet();
-                    if (context.mounted) {
-                      context.go('/');
+                    final shouldDisconnect = await showGeneralDialog<bool>(
+                      context: context,
+                      barrierDismissible: true,
+                      barrierLabel: 'Dismiss',
+                      transitionDuration: const Duration(milliseconds: 300),
+                      pageBuilder: (context, animation, secondaryAnimation) {
+                        return AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            side: BorderSide(color: context.colors.onSurface.withValues(alpha: 0.1)),
+                          ),
+                          backgroundColor: isDark ? Colors.black : Colors.white,
+                          title: Text('Disconnect Wallet?', style: context.typography.titleLarge),
+                          content: Text(
+                            'Are you sure you want to disconnect? Your secret key will be removed from this device.',
+                            style: context.typography.bodyMedium,
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: Text('Cancel', style: context.typography.labelLarge?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6))),
+                            ),
+                            ElevatedButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Disconnect'),
+                            ),
+                          ],
+                        );
+                      },
+                      transitionBuilder: (context, animation, secondaryAnimation, child) {
+                        return ScaleTransition(
+                          scale: CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeOutBack,
+                          ),
+                          child: child,
+                        );
+                      },
+                    );
+
+                    if (shouldDisconnect == true) {
+                      await ref.read(walletProvider.notifier).removeWallet();
+                      if (context.mounted) {
+                        context.go('/');
+                      }
                     }
                   },
                 ),

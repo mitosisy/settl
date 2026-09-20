@@ -1,4 +1,4 @@
-/// Application-wide constants for ChainPay.
+/// Application-wide constants for Settl.
 class AppConstants {
   AppConstants._();
 
@@ -71,7 +71,7 @@ class AppConstants {
   static const String mnemonicStorageKey = 'solana_mnemonic';
 
   // ─── App Info ──────────────────────────────────────────────────
-  static const String appName = 'ChainPay';
+  static const String appName = 'Settl';
   static const String appVersion = '1.0.0';
   static const String networkName = 'Solana Devnet';
 }

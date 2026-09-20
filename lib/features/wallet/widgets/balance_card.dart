@@ -54,9 +54,15 @@ class BalanceCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  Formatters.truncateAddress(walletAddress),
+                  Formatters.resolveSettlId(walletAddress) ?? 'anon@settl',
                   style: context.typography.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
+                  ),
+                ),
+                Text(
+                  Formatters.truncateAddress(walletAddress),
+                  style: context.typography.bodySmall?.copyWith(
+                    color: context.colors.onSurface.withValues(alpha: 0.5),
                   ),
                 ),
               ],

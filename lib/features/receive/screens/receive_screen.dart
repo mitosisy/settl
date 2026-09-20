@@ -10,6 +10,7 @@ import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
 import 'package:chain_pay/features/receive/widgets/my_qr_card.dart';
 import 'package:chain_pay/services/qr_service.dart';
 import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
+import 'package:chain_pay/core/utils/formatters.dart';
 
 class ReceiveScreen extends ConsumerStatefulWidget {
   const ReceiveScreen({super.key});
@@ -116,7 +117,19 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
                     .then()
                     .scaleXY(begin: 1.04, end: 1.0, duration: 100.ms, curve: Curves.easeIn),
               ),
+
+              const SizedBox(height: 16),
               
+              Text(
+                Formatters.resolveSettlId(address) ?? '${address.substring(0, 4)}...${address.substring(address.length - 4)}',
+                style: context.typography.headlineMedium?.copyWith(
+                  color: context.colors.primary,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
+                ),
+                textAlign: TextAlign.center,
+              ),
+
               const SizedBox(height: 32),
               
               // Warning text

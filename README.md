@@ -1,6 +1,6 @@
 # Settl (Blockchain UPI)
 
-![Main App](docs/screenshots/home_dark.png)
+<img src="docs/screenshots/home_dark.png" alt="Home" width="250" />
 
 A modern, fast, and beautifully designed Solana-based payments application built with Flutter. Settl bridges the gap between Web3 complexity and traditional Web2 fintech apps (like Venmo or UPI) by using a human-readable alias system (`@settl`) combined with a gorgeous glassmorphic user interface.
 
@@ -13,7 +13,7 @@ A modern, fast, and beautifully designed Solana-based payments application built
 
 | Splash | Onboarding | Import | Home & Balance | History |
 | :---: | :---: | :---: | :---: | :---: |
-| ![Splash](docs/screenshots/splash_light.png) | ![Onboarding](docs/screenshots/onboarding.png) | ![Import](docs/screenshots/import.png) | ![Home](docs/screenshots/home_light.png) | ![History](docs/screenshots/history.png) |
+| <img src="docs/screenshots/splash_light.png" alt="Splash" width="200" /> | <img src="docs/screenshots/onboarding.png" alt="Onboarding" width="200" /> | <img src="docs/screenshots/import.png" alt="Import" width="200" /> | <img src="docs/screenshots/home_light.png" alt="Home" width="200" /> | <img src="docs/screenshots/history.png" alt="History" width="200" /> |
 
 ---
 

@@ -10,7 +10,6 @@ import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
 import 'package:chain_pay/features/receive/widgets/my_qr_card.dart';
 import 'package:chain_pay/services/qr_service.dart';
 import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
-import 'package:chain_pay/core/utils/formatters.dart';
 import 'package:chain_pay/features/identity/providers/identity_provider.dart';
 
 class ReceiveScreen extends ConsumerStatefulWidget {

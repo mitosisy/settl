@@ -11,6 +11,7 @@ import 'package:chain_pay/features/receive/widgets/my_qr_card.dart';
 import 'package:chain_pay/services/qr_service.dart';
 import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
 import 'package:chain_pay/core/utils/formatters.dart';
+import 'package:chain_pay/features/identity/providers/identity_provider.dart';
 
 class ReceiveScreen extends ConsumerStatefulWidget {
   const ReceiveScreen({super.key});
@@ -121,7 +122,7 @@ class _ReceiveScreenState extends ConsumerState<ReceiveScreen> {
               const SizedBox(height: 16),
               
               Text(
-                Formatters.resolveSettlId(address) ?? '${address.substring(0, 4)}...${address.substring(address.length - 4)}',
+                ref.watch(identityServiceProvider).resolvePubKeyToSettlId(address) ?? '${address.substring(0, 4)}...${address.substring(address.length - 4)}',
                 style: context.typography.headlineMedium?.copyWith(
                   color: context.colors.primary,
                   fontWeight: FontWeight.bold,

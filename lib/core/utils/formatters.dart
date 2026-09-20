@@ -11,18 +11,6 @@ class Formatters {
     final formatter = NumberFormat('#,##0.00');
     return formatter.format(amount);
   }
-
-  /// Resolves a known public key to a Settl ID.
-  static String? resolveSettlId(String address) {
-    const knownIds = {
-      'D67ReZBtmq4AxyDXt1iRzWbKL8XMmvLw1LdGvvLZKdRh': 'faucet@settl',
-      'Kq5vWMGmH1T2wXUfHb7soHuXz23A8FZgpye27vpcaFA': 'trustcafe@settl',
-      '9VWg7mWaZqgNrsZE6VZ6jEUjrNkHWWWw9eZZJMEzvFEs': 'quickmart@settl',
-      '9HeT589vj2EmvcSYyorBg19j4myTj1kNqVtuT5syfWL7': 'sketchyvendor@settl',
-    };
-    return knownIds[address];
-  }
-
   /// Formats a SOL amount with up to 4 decimal places.
   ///
   /// Example: `2.4531` → `"2.4531"`

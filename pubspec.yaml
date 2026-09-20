@@ -63,8 +63,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/splash/onboard_logo.png
+    - assets/splash/
     - assets/icons/
+    - assets/data/
 
 flutter_launcher_icons:
   android: true

@@ -3,6 +3,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 
 import 'package:chain_pay/models/merchant_model.dart';
 import 'package:chain_pay/services/qr_service.dart';
+import 'package:chain_pay/features/identity/providers/identity_provider.dart';
 
 /// State of the QR Scanner.
 class ScannerState {
@@ -89,14 +90,8 @@ class ScannerNotifier extends Notifier<ScannerState> {
   }
 
   String? _resolveMockUpiId(String upiId) {
-    // Mock Address Book for Hackathon Demo
-    final mockRegistry = {
-      'faucet@settl': 'D67ReZBtmq4AxyDXt1iRzWbKL8XMmvLw1LdGvvLZKdRh',
-      'trustcafe@settl': 'Kq5vWMGmH1T2wXUfHb7soHuXz23A8FZgpye27vpcaFA',
-      'quickmart@settl': '9VWg7mWaZqgNrsZE6VZ6jEUjrNkHWWWw9eZZJMEzvFEs',
-      'sketchyvendor@settl': '9HeT589vj2EmvcSYyorBg19j4myTj1kNqVtuT5syfWL7',
-    };
-    return mockRegistry[upiId.toLowerCase()];
+    final identityService = ref.read(identityServiceProvider);
+    return identityService.resolveSettlIdToPubKey(upiId.toLowerCase());
   }
 
   void _parseRawValue(String rawValue) {

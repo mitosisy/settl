@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:chain_pay/core/utils/formatters.dart';
 import 'package:chain_pay/core/theme/theme_extension.dart';
 import 'package:chain_pay/core/widgets/glass_container.dart';
+import 'package:chain_pay/features/identity/providers/identity_provider.dart';
 
 /// Glassmorphism balance card showing USDC and SOL balances.
-class BalanceCard extends StatelessWidget {
+class BalanceCard extends ConsumerWidget {
   const BalanceCard({
     super.key,
     required this.usdcBalance,
@@ -23,7 +25,7 @@ class BalanceCard extends StatelessWidget {
   final bool isLoading;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isDark = context.isDarkMode;
     final innerCardColor = isDark ? Colors.white : Colors.black;
     final innerTextColor = isDark ? Colors.black : Colors.white;
@@ -54,7 +56,7 @@ class BalanceCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  Formatters.resolveSettlId(walletAddress) ?? 'anon@settl',
+                  ref.read(identityServiceProvider).resolvePubKeyToSettlId(walletAddress) ?? 'anon@settl',
                   style: context.typography.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w600,
                   ),

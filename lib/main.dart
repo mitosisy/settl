@@ -12,6 +12,8 @@ import 'package:chain_pay/features/settings/providers/settings_provider.dart';
 import 'package:chain_pay/services/solana_service.dart';
 import 'package:chain_pay/features/payment_intent/services/intent_broadcaster.dart';
 import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
+import 'package:chain_pay/services/identity_service.dart';
+import 'package:chain_pay/features/identity/providers/identity_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,11 +36,15 @@ void main() async {
   await intentBroadcaster.init();
   intentBroadcaster.startListening();
 
+  final identityService = IdentityService();
+  await identityService.loadDirectory();
+
   runApp(
     ProviderScope(
       overrides: [
         solanaServiceProvider.overrideWithValue(solanaService),
         intentBroadcasterProvider.overrideWithValue(intentBroadcaster),
+        identityServiceProvider.overrideWithValue(identityService),
       ],
       child: const ChainPayApp(),
     ),

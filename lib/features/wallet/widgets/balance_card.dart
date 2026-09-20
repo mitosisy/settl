@@ -4,10 +4,10 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:chain_pay/core/utils/formatters.dart';
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/widgets/glass_container.dart';
-import 'package:chain_pay/features/identity/providers/identity_provider.dart';
+import 'package:settl/core/utils/formatters.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/widgets/glass_container.dart';
+import 'package:settl/features/identity/providers/identity_provider.dart';
 
 /// Glassmorphism balance card showing USDC and SOL balances.
 class BalanceCard extends ConsumerStatefulWidget {

@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
-import 'package:chain_pay/core/constants/app_constants.dart';
-import 'package:chain_pay/core/errors/app_exception.dart';
+import 'package:settl/core/constants/app_constants.dart';
+import 'package:settl/core/errors/app_exception.dart';
 
 /// Low-level Solana Devnet JSON-RPC client.
 ///

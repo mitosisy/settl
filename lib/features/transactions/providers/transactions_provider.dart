@@ -1,8 +1,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:chain_pay/models/transaction_model.dart';
-import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
-import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
+import 'package:settl/models/transaction_model.dart';
+import 'package:settl/features/payment_intent/providers/offline_queue_provider.dart';
+import 'package:settl/features/wallet/providers/wallet_provider.dart';
 
 /// Provider to fetch and cache transaction history for the current wallet.
 ///

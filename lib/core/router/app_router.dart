@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:chain_pay/features/onboarding/screens/splash_screen.dart';
-import 'package:chain_pay/features/onboarding/screens/onboarding_carousel.dart';
-import 'package:chain_pay/features/onboarding/screens/wallet_setup_screen.dart';
-import 'package:chain_pay/features/wallet/screens/home_screen.dart';
-import 'package:chain_pay/features/scan_pay/screens/qr_scanner_screen.dart';
-import 'package:chain_pay/features/scan_pay/screens/reputation_screen.dart';
-import 'package:chain_pay/features/scan_pay/screens/amount_entry_screen.dart';
-import 'package:chain_pay/features/scan_pay/screens/confirm_pay_screen.dart';
-import 'package:chain_pay/features/receive/screens/receive_screen.dart';
-import 'package:chain_pay/features/transactions/screens/history_screen.dart';
-import 'package:chain_pay/features/transactions/screens/transaction_detail_screen.dart';
-import 'package:chain_pay/features/settings/screens/settings_screen.dart';
-import 'package:chain_pay/models/merchant_model.dart';
-import 'package:chain_pay/models/transaction_model.dart';
+import 'package:settl/features/onboarding/screens/splash_screen.dart';
+import 'package:settl/features/onboarding/screens/onboarding_carousel.dart';
+import 'package:settl/features/onboarding/screens/wallet_setup_screen.dart';
+import 'package:settl/features/wallet/screens/home_screen.dart';
+import 'package:settl/features/scan_pay/screens/qr_scanner_screen.dart';
+import 'package:settl/features/scan_pay/screens/reputation_screen.dart';
+import 'package:settl/features/scan_pay/screens/amount_entry_screen.dart';
+import 'package:settl/features/scan_pay/screens/confirm_pay_screen.dart';
+import 'package:settl/features/receive/screens/receive_screen.dart';
+import 'package:settl/features/transactions/screens/history_screen.dart';
+import 'package:settl/features/transactions/screens/transaction_detail_screen.dart';
+import 'package:settl/features/settings/screens/settings_screen.dart';
+import 'package:settl/models/merchant_model.dart';
+import 'package:settl/models/transaction_model.dart';
 
-import 'package:chain_pay/features/navigation/screens/main_shell.dart';
+import 'package:settl/features/navigation/screens/main_shell.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:chain_pay/core/theme/theme_extension.dart';
+import 'package:settl/core/theme/theme_extension.dart';
 
 class GradientScaffold extends StatelessWidget {
   const GradientScaffold({

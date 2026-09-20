@@ -4,9 +4,9 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hive/hive.dart';
 
-import 'package:chain_pay/core/constants/app_constants.dart';
-import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
-import 'package:chain_pay/models/wallet_model.dart';
+import 'package:settl/core/constants/app_constants.dart';
+import 'package:settl/features/payment_intent/providers/offline_queue_provider.dart';
+import 'package:settl/models/wallet_model.dart';
 
 /// State representing the user's wallet.
 class WalletState {

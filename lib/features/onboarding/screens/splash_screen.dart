@@ -3,11 +3,11 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/constants/app_constants.dart';
-import 'package:chain_pay/core/constants/strings.dart';
-import 'package:chain_pay/features/onboarding/providers/onboarding_provider.dart';
-import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/constants/app_constants.dart';
+import 'package:settl/core/constants/strings.dart';
+import 'package:settl/features/onboarding/providers/onboarding_provider.dart';
+import 'package:settl/core/widgets/gradient_scaffold.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});

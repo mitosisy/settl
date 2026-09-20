@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/constants/strings.dart';
-import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/constants/strings.dart';
+import 'package:settl/core/widgets/gradient_scaffold.dart';
 
 class OnboardingCarousel extends StatefulWidget {
   const OnboardingCarousel({super.key});

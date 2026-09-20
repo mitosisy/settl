@@ -3,9 +3,9 @@ import 'dart:math';
 
 import 'package:hive/hive.dart';
 
-import 'package:chain_pay/core/constants/app_constants.dart';
-import 'package:chain_pay/models/reputation_model.dart';
-import 'package:chain_pay/services/solana_service.dart';
+import 'package:settl/core/constants/app_constants.dart';
+import 'package:settl/models/reputation_model.dart';
+import 'package:settl/services/solana_service.dart';
 
 /// Engine for computing wallet reputation scores.
 ///

@@ -1,5 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:chain_pay/services/identity_service.dart';
+import 'package:settl/services/identity_service.dart';
 
 final identityServiceProvider = Provider<IdentityService>((ref) {
   return IdentityService();

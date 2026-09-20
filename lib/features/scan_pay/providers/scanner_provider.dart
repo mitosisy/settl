@@ -1,9 +1,9 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import 'package:chain_pay/models/merchant_model.dart';
-import 'package:chain_pay/services/qr_service.dart';
-import 'package:chain_pay/features/identity/providers/identity_provider.dart';
+import 'package:settl/models/merchant_model.dart';
+import 'package:settl/services/qr_service.dart';
+import 'package:settl/features/identity/providers/identity_provider.dart';
 
 /// State of the QR Scanner.
 class ScannerState {

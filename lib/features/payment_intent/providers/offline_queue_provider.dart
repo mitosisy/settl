@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:chain_pay/features/payment_intent/models/payment_intent_model.dart';
-import 'package:chain_pay/features/payment_intent/services/intent_broadcaster.dart';
-import 'package:chain_pay/services/solana_service.dart';
+import 'package:settl/features/payment_intent/models/payment_intent_model.dart';
+import 'package:settl/features/payment_intent/services/intent_broadcaster.dart';
+import 'package:settl/services/solana_service.dart';
 
 /// Provider for the [IntentBroadcaster] singleton.
 final intentBroadcasterProvider = Provider<IntentBroadcaster>((ref) {

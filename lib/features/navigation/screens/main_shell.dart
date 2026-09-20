@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:chain_pay/core/widgets/glass_container.dart';
-import 'package:chain_pay/core/theme/theme_extension.dart';
+import 'package:settl/core/widgets/glass_container.dart';
+import 'package:settl/core/theme/theme_extension.dart';
 
 class MainShell extends StatelessWidget {
   const MainShell({super.key, required this.child});

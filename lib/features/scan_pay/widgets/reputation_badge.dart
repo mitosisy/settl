@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/models/reputation_model.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/models/reputation_model.dart';
 
 /// A small inline badge showing the trust verdict and emoji.
 class ReputationBadge extends StatelessWidget {

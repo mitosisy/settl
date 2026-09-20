@@ -3,11 +3,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import 'package:go_router/go_router.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/features/settings/providers/settings_provider.dart';
-import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
-import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
-import 'package:chain_pay/core/widgets/glass_container.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/features/settings/providers/settings_provider.dart';
+import 'package:settl/features/wallet/providers/wallet_provider.dart';
+import 'package:settl/core/widgets/gradient_scaffold.dart';
+import 'package:settl/core/widgets/glass_container.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});

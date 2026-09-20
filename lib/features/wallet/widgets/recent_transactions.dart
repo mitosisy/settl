@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/utils/formatters.dart';
-import 'package:chain_pay/core/constants/strings.dart';
-import 'package:chain_pay/models/transaction_model.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/utils/formatters.dart';
+import 'package:settl/core/constants/strings.dart';
+import 'package:settl/models/transaction_model.dart';
 
 /// Displays a list of recent transactions with staggered animation.
 ///

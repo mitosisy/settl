@@ -1,8 +1,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:chain_pay/models/reputation_model.dart';
-import 'package:chain_pay/services/reputation_service.dart';
-import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
+import 'package:settl/models/reputation_model.dart';
+import 'package:settl/services/reputation_service.dart';
+import 'package:settl/features/payment_intent/providers/offline_queue_provider.dart';
 
 // Provide the ReputationService
 final reputationServiceProvider = Provider<ReputationService>((ref) {

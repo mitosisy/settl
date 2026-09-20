@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/theme/app_typography.dart';
-import 'package:chain_pay/core/utils/formatters.dart';
-import 'package:chain_pay/models/merchant_model.dart';
-import 'package:chain_pay/core/widgets/glass_container.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/theme/app_typography.dart';
+import 'package:settl/core/utils/formatters.dart';
+import 'package:settl/models/merchant_model.dart';
+import 'package:settl/core/widgets/glass_container.dart';
 
 /// Card displaying merchant details (name and truncated wallet address).
 class MerchantCard extends StatelessWidget {

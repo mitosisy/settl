@@ -1,6 +1,6 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
+import 'package:settl/features/wallet/providers/wallet_provider.dart';
 
 /// Indicates the current state of onboarding.
 enum OnboardingStatus {

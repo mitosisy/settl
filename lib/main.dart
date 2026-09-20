@@ -3,17 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'package:chain_pay/core/theme/app_theme.dart';
-import 'package:chain_pay/core/constants/app_constants.dart';
-import 'package:chain_pay/core/constants/strings.dart';
-import 'package:chain_pay/core/router/app_router.dart';
-import 'package:chain_pay/features/settings/providers/settings_provider.dart';
+import 'package:settl/core/theme/app_theme.dart';
+import 'package:settl/core/constants/app_constants.dart';
+import 'package:settl/core/constants/strings.dart';
+import 'package:settl/core/router/app_router.dart';
+import 'package:settl/features/settings/providers/settings_provider.dart';
 
-import 'package:chain_pay/services/solana_service.dart';
-import 'package:chain_pay/features/payment_intent/services/intent_broadcaster.dart';
-import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
-import 'package:chain_pay/services/identity_service.dart';
-import 'package:chain_pay/features/identity/providers/identity_provider.dart';
+import 'package:settl/services/solana_service.dart';
+import 'package:settl/features/payment_intent/services/intent_broadcaster.dart';
+import 'package:settl/features/payment_intent/providers/offline_queue_provider.dart';
+import 'package:settl/services/identity_service.dart';
+import 'package:settl/features/identity/providers/identity_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

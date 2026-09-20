@@ -4,16 +4,16 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/constants/strings.dart';
-import 'package:chain_pay/core/utils/formatters.dart';
-import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
-import 'package:chain_pay/features/payment_intent/services/intent_signer.dart';
-import 'package:chain_pay/features/payment_intent/models/payment_intent_model.dart';
-import 'package:chain_pay/models/merchant_model.dart';
-import 'package:chain_pay/features/scan_pay/widgets/slide_to_pay_button.dart';
-import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
-import 'package:chain_pay/core/widgets/glass_container.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/constants/strings.dart';
+import 'package:settl/core/utils/formatters.dart';
+import 'package:settl/features/payment_intent/providers/offline_queue_provider.dart';
+import 'package:settl/features/payment_intent/services/intent_signer.dart';
+import 'package:settl/features/payment_intent/models/payment_intent_model.dart';
+import 'package:settl/models/merchant_model.dart';
+import 'package:settl/features/scan_pay/widgets/slide_to_pay_button.dart';
+import 'package:settl/core/widgets/gradient_scaffold.dart';
+import 'package:settl/core/widgets/glass_container.dart';
 
 // Provides an IntentSigner instance for the confirm screen
 final intentSignerProvider = Provider<IntentSigner>((ref) {

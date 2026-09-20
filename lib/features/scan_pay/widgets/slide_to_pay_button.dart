@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/constants/strings.dart';
-import 'package:chain_pay/core/widgets/glass_container.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/constants/strings.dart';
+import 'package:settl/core/widgets/glass_container.dart';
 
 /// Slide-to-pay button for confirming transactions.
 class SlideToPayButton extends StatefulWidget {

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:chain_pay/models/identity_model.dart';
+import 'package:settl/models/identity_model.dart';
 
 class IdentityService {
   final Map<String, String> _settlIdToPubKey = {};

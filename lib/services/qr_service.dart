@@ -1,4 +1,4 @@
-import 'package:chain_pay/core/errors/app_exception.dart';
+import 'package:settl/core/errors/app_exception.dart';
 
 /// Result of parsing a Solana Pay QR code URI.
 class ParsedQR {

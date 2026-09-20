@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:hive/hive.dart';
 
-import 'package:chain_pay/core/constants/app_constants.dart';
+import 'package:settl/core/constants/app_constants.dart';
 
 /// App settings like dark mode, devnet vs mainnet, etc.
 class SettingsState {

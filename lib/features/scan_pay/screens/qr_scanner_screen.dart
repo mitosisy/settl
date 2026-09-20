@@ -3,9 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/constants/strings.dart';
-import 'package:chain_pay/features/scan_pay/providers/scanner_provider.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/constants/strings.dart';
+import 'package:settl/features/scan_pay/providers/scanner_provider.dart';
 
 class QrScannerScreen extends ConsumerStatefulWidget {
   const QrScannerScreen({super.key});

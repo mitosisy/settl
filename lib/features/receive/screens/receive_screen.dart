@@ -4,13 +4,13 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/constants/strings.dart';
-import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
-import 'package:chain_pay/features/receive/widgets/my_qr_card.dart';
-import 'package:chain_pay/services/qr_service.dart';
-import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
-import 'package:chain_pay/features/identity/providers/identity_provider.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/constants/strings.dart';
+import 'package:settl/features/wallet/providers/wallet_provider.dart';
+import 'package:settl/features/receive/widgets/my_qr_card.dart';
+import 'package:settl/services/qr_service.dart';
+import 'package:settl/core/widgets/gradient_scaffold.dart';
+import 'package:settl/features/identity/providers/identity_provider.dart';
 
 class ReceiveScreen extends ConsumerStatefulWidget {
   const ReceiveScreen({super.key});

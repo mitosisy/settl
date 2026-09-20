@@ -1,4 +1,4 @@
-import 'package:chain_pay/services/solana_service.dart';
+import 'package:settl/services/solana_service.dart';
 
 void main() async {
   final service = SolanaService();

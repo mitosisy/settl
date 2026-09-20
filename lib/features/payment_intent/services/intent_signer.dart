@@ -4,10 +4,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:solana/solana.dart';
 import 'package:solana/encoder.dart';
 
-import 'package:chain_pay/core/constants/app_constants.dart';
-import 'package:chain_pay/core/errors/app_exception.dart';
-import 'package:chain_pay/features/payment_intent/models/payment_intent_model.dart';
-import 'package:chain_pay/services/solana_service.dart';
+import 'package:settl/core/constants/app_constants.dart';
+import 'package:settl/core/errors/app_exception.dart';
+import 'package:settl/features/payment_intent/models/payment_intent_model.dart';
+import 'package:settl/services/solana_service.dart';
 
 /// Signs payment transactions locally and stores them in the offline queue.
 ///

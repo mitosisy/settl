@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/models/reputation_model.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/models/reputation_model.dart';
 
 /// Animated circular progress ring showing the trust score.
 class TrustScoreRing extends StatelessWidget {

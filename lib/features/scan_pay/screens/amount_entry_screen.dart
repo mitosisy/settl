@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/constants/strings.dart';
-import 'package:chain_pay/core/utils/validators.dart';
-import 'package:chain_pay/features/scan_pay/widgets/merchant_card.dart';
-import 'package:chain_pay/models/merchant_model.dart';
-import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/constants/strings.dart';
+import 'package:settl/core/utils/validators.dart';
+import 'package:settl/features/scan_pay/widgets/merchant_card.dart';
+import 'package:settl/models/merchant_model.dart';
+import 'package:settl/core/widgets/gradient_scaffold.dart';
 
 class AmountEntryScreen extends StatefulWidget {
   const AmountEntryScreen({super.key, required this.merchant});

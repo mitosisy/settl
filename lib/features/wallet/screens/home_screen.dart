@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:chain_pay/core/constants/strings.dart';
-import 'package:chain_pay/features/wallet/providers/wallet_provider.dart';
-import 'package:chain_pay/features/wallet/widgets/balance_card.dart';
-import 'package:chain_pay/features/wallet/widgets/recent_transactions.dart';
-import 'package:chain_pay/features/payment_intent/providers/offline_queue_provider.dart';
-import 'package:chain_pay/features/scan_pay/providers/scanner_provider.dart';
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
-import 'package:chain_pay/core/widgets/top_nav_bar.dart';
-import 'package:chain_pay/features/transactions/providers/transactions_provider.dart';
+import 'package:settl/core/constants/strings.dart';
+import 'package:settl/features/wallet/providers/wallet_provider.dart';
+import 'package:settl/features/wallet/widgets/balance_card.dart';
+import 'package:settl/features/wallet/widgets/recent_transactions.dart';
+import 'package:settl/features/payment_intent/providers/offline_queue_provider.dart';
+import 'package:settl/features/scan_pay/providers/scanner_provider.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/widgets/gradient_scaffold.dart';
+import 'package:settl/core/widgets/top_nav_bar.dart';
+import 'package:settl/features/transactions/providers/transactions_provider.dart';
 
 /// Main home screen showing balance, actions, and recent transactions.
 class HomeScreen extends ConsumerStatefulWidget {

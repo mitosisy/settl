@@ -43,7 +43,7 @@ A modern, fast, and beautifully designed Solana-based payments application built
 The codebase strictly follows a feature-based architecture utilizing `Riverpod` for state management and `go_router` for declarative navigation.
 
 ```text
-chain_pay/
+settl/
 ├── assets/
 │   ├── data/
 │   │   └── directory.json          # Mocked backend @settl identity resolution
@@ -85,8 +85,8 @@ chain_pay/
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/chain_pay.git
-   cd chain_pay
+   git clone https://github.com/yourusername/settl.git
+   cd settl
    ```
 
 2. **Install dependencies:**

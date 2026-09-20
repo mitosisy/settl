@@ -5,9 +5,9 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart' as p;
 
-import 'package:chain_pay/core/constants/app_constants.dart';
-import 'package:chain_pay/features/payment_intent/models/payment_intent_model.dart';
-import 'package:chain_pay/services/solana_service.dart';
+import 'package:settl/core/constants/app_constants.dart';
+import 'package:settl/features/payment_intent/models/payment_intent_model.dart';
+import 'package:settl/services/solana_service.dart';
 
 /// Manages the offline payment queue and broadcasts signed intents
 /// when connectivity is restored.

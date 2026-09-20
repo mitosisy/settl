@@ -3,13 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:chain_pay/core/theme/theme_extension.dart';
-import 'package:chain_pay/core/constants/app_constants.dart';
-import 'package:chain_pay/core/constants/strings.dart';
-import 'package:chain_pay/core/utils/formatters.dart';
-import 'package:chain_pay/models/transaction_model.dart';
-import 'package:chain_pay/core/widgets/gradient_scaffold.dart';
-import 'package:chain_pay/core/widgets/glass_container.dart';
+import 'package:settl/core/theme/theme_extension.dart';
+import 'package:settl/core/constants/app_constants.dart';
+import 'package:settl/core/constants/strings.dart';
+import 'package:settl/core/utils/formatters.dart';
+import 'package:settl/models/transaction_model.dart';
+import 'package:settl/core/widgets/gradient_scaffold.dart';
+import 'package:settl/core/widgets/glass_container.dart';
 
 class TransactionDetailScreen extends StatelessWidget {
   const TransactionDetailScreen({super.key, required this.transaction});

@@ -57,7 +57,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.only(top: 150, left: 24, right: 24, bottom: 24),
+          padding: const EdgeInsets.only(top: 135, left: 24, right: 24, bottom: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

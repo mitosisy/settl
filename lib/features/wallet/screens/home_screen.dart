@@ -42,13 +42,16 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final queuedCount = ref.watch(queuedIntentCountProvider);
     final transactionsAsync = ref.watch(transactionsProvider);
     
-    final settlId = ref.watch(identityServiceProvider).resolvePubKeyToSettlId(wallet.address ?? '') ?? 'anon';
+    String settlId = ref.watch(identityServiceProvider).resolvePubKeyToSettlId(wallet.address ?? '') ?? 'anon';
+    if (settlId.contains('@')) {
+      settlId = settlId.split('@')[0];
+    }
     
     final List<String Function(String)> greetingTemplates = [
       (id) => "Hi, $id",
       (id) => "Welcome back, $id",
       (_) => "Good to see you",
-      (id) => "How's it going, $id",
+      (id) => "How's it going, $id?",
       (id) => "Hello, $id",
       (_) => "Hey there",
       (id) => "Greetings, $id",

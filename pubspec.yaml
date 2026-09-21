@@ -74,6 +74,7 @@ flutter_launcher_icons:
   image_path_ios: "assets/icons/launcher_icon.png"
   adaptive_icon_background: "assets/splash/launcher_bg.png"
   adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
+  adaptive_icon_monochrome: "assets/icons/app_icon_monochrome.png"
   windows:
     generate: true
     image_path: "assets/icons/launcher_icon.png"

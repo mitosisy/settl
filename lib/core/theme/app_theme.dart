@@ -69,6 +69,22 @@ class AppTheme {
         backgroundColor: Colors.black,
         contentTextStyle: TextStyle(color: Colors.white),
       ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) return Colors.grey.shade400;
+          if (states.contains(WidgetState.selected)) return Colors.white;
+          return Colors.black;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) return Colors.grey.shade200;
+          if (states.contains(WidgetState.selected)) return Colors.black;
+          return Colors.white;
+        }),
+        trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) return Colors.grey.shade300;
+          return Colors.black.withValues(alpha: 0.2);
+        }),
+      ),
     );
   }
 
@@ -134,6 +150,22 @@ class AppTheme {
       snackBarTheme: const SnackBarThemeData(
         backgroundColor: Colors.white,
         contentTextStyle: TextStyle(color: Colors.black),
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) return Colors.grey.shade600;
+          if (states.contains(WidgetState.selected)) return Colors.black;
+          return Colors.white;
+        }),
+        trackColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) return Colors.grey.shade800;
+          if (states.contains(WidgetState.selected)) return Colors.white;
+          return Colors.black;
+        }),
+        trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.disabled)) return Colors.grey.shade700;
+          return Colors.white.withValues(alpha: 0.2);
+        }),
       ),
     );
   }

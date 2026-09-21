@@ -47,17 +47,29 @@ class SettingsScreen extends ConsumerWidget {
           GlassContainer(
             padding: EdgeInsets.zero,
             child: SwitchListTile(
-              title: Text('Use Solana Devnet', style: context.typography.bodyLarge),
-              subtitle: Text(
-                'Turn off to use Mainnet (Demo only)',
-                style: context.typography.labelSmall?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.6)),
+              title: Text(
+                'Use Solana Devnet', 
+                style: context.typography.bodyLarge?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.5)),
               ),
-              value: settings.isDevnet,
-              onChanged: (val) {
-                ref.read(settingsProvider.notifier).setNetwork(val);
-              },
-              activeThumbColor: context.colors.primary,
-              activeTrackColor: context.colors.primary.withValues(alpha: 0.5),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Turn off to use Mainnet (Real money)',
+                    style: context.typography.labelSmall?.copyWith(color: context.colors.onSurface.withValues(alpha: 0.4)),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Mainnet feature not yet implemented',
+                    style: context.typography.labelSmall?.copyWith(
+                      color: Colors.orangeAccent,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+              value: true, // Force to true (devnet)
+              onChanged: null, // Disables the switch
             ),
           ),
           
@@ -78,12 +90,15 @@ class SettingsScreen extends ConsumerWidget {
                       ref.read(settingsProvider.notifier).setThemeMode(isDark ? ThemeMode.dark : ThemeMode.light);
                     }
                   },
-                  activeThumbColor: context.colors.primary,
-                  activeTrackColor: context.colors.primary.withValues(alpha: 0.5),
                 ),
                 Divider(height: 1, color: context.colors.onSurface.withValues(alpha: 0.1)),
                 RadioListTile<ThemeMode>(
-                  title: Text('Light Mode', style: context.typography.bodyLarge),
+                  title: Text(
+                    'Light Mode', 
+                    style: context.typography.bodyLarge?.copyWith(
+                      color: settings.themeMode == ThemeMode.system ? context.colors.onSurface.withValues(alpha: 0.4) : null,
+                    ),
+                  ),
                   value: ThemeMode.light,
                   groupValue: settings.themeMode,
                   onChanged: settings.themeMode == ThemeMode.system ? null : (val) {
@@ -92,7 +107,12 @@ class SettingsScreen extends ConsumerWidget {
                   activeColor: context.colors.primary,
                 ),
                 RadioListTile<ThemeMode>(
-                  title: Text('Dark Mode', style: context.typography.bodyLarge),
+                  title: Text(
+                    'Dark Mode', 
+                    style: context.typography.bodyLarge?.copyWith(
+                      color: settings.themeMode == ThemeMode.system ? context.colors.onSurface.withValues(alpha: 0.4) : null,
+                    ),
+                  ),
                   value: ThemeMode.dark,
                   groupValue: settings.themeMode,
                   onChanged: settings.themeMode == ThemeMode.system ? null : (val) {
@@ -165,12 +185,17 @@ class SettingsScreen extends ConsumerWidget {
                         );
                       },
                       transitionBuilder: (context, animation, secondaryAnimation, child) {
-                        return ScaleTransition(
-                          scale: CurvedAnimation(
-                            parent: animation,
-                            curve: Curves.easeOutBack,
+                        return FadeTransition(
+                          opacity: animation,
+                          child: ScaleTransition(
+                            scale: Tween<double>(begin: 0.8, end: 1.0).animate(
+                              CurvedAnimation(
+                                parent: animation,
+                                curve: Curves.easeOutBack,
+                              ),
+                            ),
+                            child: child,
                           ),
-                          child: child,
                         );
                       },
                     );

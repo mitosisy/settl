@@ -70,9 +70,38 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
   @override
   Widget build(BuildContext context) {
     final isDark = context.isDarkMode;
-    final innerCardColor = isDark ? Colors.white : Colors.black;
-    final innerTextColor = isDark ? Colors.black : Colors.white;
-    final innerMutedColor = isDark ? Colors.black54 : Colors.white54;
+    
+    final innerCardGradient = isDark
+        ? const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            stops: [0.0, 0.2, 0.5, 0.8, 1.0],
+            colors: [
+              Color(0xFF4A4A4A), // Lighter metallic edge
+              Color(0xFF2A2A2A), // Dark metallic body
+              Color(0xFF1A1A1A), // Darker center
+              Color(0xFF333333), // Reflection
+              Color(0xFF0F0F0F), // Dark edge
+            ],
+          )
+        : const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            stops: [0.0, 0.2, 0.5, 0.8, 1.0],
+            colors: [
+              Color(0xFFFFFFFF), // Pure white edge
+              Color(0xFFE0E0E0), // Light silver
+              Color(0xFFF5F5F5), // Reflection
+              Color(0xFFD6D6D6), // Silver
+              Color(0xFFEEEEEE), // Edge
+            ],
+          );
+
+    final innerCardBorder = isDark 
+        ? Border.all(color: Colors.white.withValues(alpha: 0.15), width: 1.5)
+        : Border.all(color: Colors.white, width: 2);
+    final innerTextColor = isDark ? Colors.white : Colors.black;
+    final innerMutedColor = isDark ? Colors.white70 : Colors.black87;
 
     return GestureDetector(
       onTapDown: (details) => _updateTilt(details.globalPosition),
@@ -187,7 +216,8 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
                     // Inner card
                     Container(
                       decoration: BoxDecoration(
-                        color: innerCardColor,
+                        gradient: innerCardGradient,
+                        border: innerCardBorder,
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
@@ -251,7 +281,7 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
                                 ),
                                 const SizedBox(height: 8),
                                 widget.isLoading
-                                    ? _buildShimmer(innerCardColor)
+                                    ? _buildShimmer(isDark)
                                     : Row(
                                         crossAxisAlignment: CrossAxisAlignment.end,
                                         children: [
@@ -321,12 +351,12 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
     .slideY(begin: 0.1, end: 0, duration: 300.ms, curve: Curves.easeOutCubic);
   }
 
-  Widget _buildShimmer(Color innerCardColor) {
+  Widget _buildShimmer(bool isDark) {
     return Container(
       width: 180,
       height: 48,
       decoration: BoxDecoration(
-        color: innerCardColor == Colors.black ? Colors.white24 : Colors.black12,
+        color: isDark ? Colors.white24 : Colors.black12,
         borderRadius: BorderRadius.circular(8),
       ),
     );

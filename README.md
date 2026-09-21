@@ -11,9 +11,22 @@ A modern, fast, and beautifully designed Solana-based payments application built
 ## Screenshots
 
 
-| Splash | Onboarding | Import | Home & Balance | History |
-| :---: | :---: | :---: | :---: | :---: |
-| <img src="docs/screenshots/splash_light.png" alt="Splash" height="400" /> | <img src="docs/screenshots/onboarding.png" alt="Onboarding" height="360" /> | <img src="docs/screenshots/import.png" alt="Import" height="400" /> | <img src="docs/screenshots/home_light.png" alt="Home" height="400" /> | <img src="docs/screenshots/history.png" alt="History" height="400" /> |
+<table width="100%">
+  <tr>
+    <th width="20%">Splash</th>
+    <th width="20%">Onboarding</th>
+    <th width="20%">Import</th>
+    <th width="20%">Home & Balance</th>
+    <th width="20%">History</th>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/splash_light.png" alt="Splash" width="100%"></td>
+    <td><img src="docs/screenshots/onboarding.png" alt="Onboarding" width="100%"></td>
+    <td><img src="docs/screenshots/import.png" alt="Import" width="100%"></td>
+    <td><img src="docs/screenshots/home_light.png" alt="Home" width="100%"></td>
+    <td><img src="docs/screenshots/history.png" alt="History" width="100%"></td>
+  </tr>
+</table>
 
 ---
 

@@ -11,22 +11,24 @@ A modern, fast, and beautifully designed Solana-based payments application built
 ## Screenshots
 
 
-<table width="100%">
-  <tr>
-    <th width="20%">Splash</th>
-    <th width="20%">Onboarding</th>
-    <th width="20%">Import</th>
-    <th width="20%">Home & Balance</th>
-    <th width="20%">History</th>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/splash_light.png" alt="Splash" width="100%"></td>
-    <td><img src="docs/screenshots/onboarding.png" alt="Onboarding" width="100%"></td>
-    <td><img src="docs/screenshots/import.png" alt="Import" width="100%"></td>
-    <td><img src="docs/screenshots/home_light.png" alt="Home" width="100%"></td>
-    <td><img src="docs/screenshots/history.png" alt="History" width="100%"></td>
-  </tr>
-</table>
+<div style="overflow-x: auto; white-space: nowrap;">
+  <table style="table-layout: fixed; width: 850px;">
+    <tr>
+      <th width="170">Splash</th>
+      <th width="170">Onboarding</th>
+      <th width="170">Import</th>
+      <th width="170">Home & Balance</th>
+      <th width="170">History</th>
+    </tr>
+    <tr>
+      <td><img src="docs/screenshots/splash_light.png" alt="Splash" width="100%"></td>
+      <td><img src="docs/screenshots/onboarding.png" alt="Onboarding" width="100%"></td>
+      <td><img src="docs/screenshots/import.png" alt="Import" width="100%"></td>
+      <td><img src="docs/screenshots/home_light.png" alt="Home" width="100%"></td>
+      <td><img src="docs/screenshots/history.png" alt="History" width="100%"></td>
+    </tr>
+  </table>
+</div>
 
 ---
 

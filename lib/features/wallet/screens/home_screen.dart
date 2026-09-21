@@ -12,6 +12,8 @@ import 'package:settl/core/theme/theme_extension.dart';
 import 'package:settl/core/widgets/gradient_scaffold.dart';
 import 'package:settl/core/widgets/top_nav_bar.dart';
 import 'package:settl/features/transactions/providers/transactions_provider.dart';
+import 'package:settl/features/identity/providers/identity_provider.dart';
+import 'dart:math' as math;
 
 /// Main home screen showing balance, actions, and recent transactions.
 class HomeScreen extends ConsumerStatefulWidget {
@@ -22,9 +24,12 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
+  late int _greetingIndex;
+
   @override
   void initState() {
     super.initState();
+    _greetingIndex = math.Random().nextInt(8);
     // Load wallet and refresh balances on screen entry
     Future.microtask(() {
       ref.read(walletProvider.notifier).loadWallet();
@@ -36,6 +41,26 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     final wallet = ref.watch(walletProvider);
     final queuedCount = ref.watch(queuedIntentCountProvider);
     final transactionsAsync = ref.watch(transactionsProvider);
+    
+    final settlId = ref.watch(identityServiceProvider).resolvePubKeyToSettlId(wallet.address ?? '') ?? 'anon';
+    
+    final List<String Function(String)> greetingTemplates = [
+      (id) => "Hi, $id",
+      (id) => "Welcome back, $id",
+      (_) => "Good to see you",
+      (id) => "How's it going, $id",
+      (id) => "Hello, $id",
+      (_) => "Hey there",
+      (id) => "Greetings, $id",
+      (id) {
+        final hour = DateTime.now().hour;
+        if (hour < 12) return "Good morning, $id";
+        if (hour < 17) return "Good afternoon, $id";
+        return "Good evening, $id";
+      }
+    ];
+    
+    final greetingText = greetingTemplates[_greetingIndex](settlId);
 
     // Listen for manual entry / search bar resolution
     ref.listen(scannerProvider, (previous, next) {
@@ -67,7 +92,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             children: [
               // Header
               Text(
-                'Welcome Back!',
+                greetingText,
                 style: context.typography.displaySmall?.copyWith(
                   fontWeight: FontWeight.w600,
                   letterSpacing: -1,

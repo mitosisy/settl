@@ -70,13 +70,13 @@ flutter:
 flutter_launcher_icons:
   android: true
   ios: true
-  image_path_android: "assets/icons/app_icon_android.png"
-  image_path_ios: "assets/icons/app_icon_ios.png"
-  adaptive_icon_background: "#000000"
+  image_path_android: "assets/icons/launcher_icon.png"
+  image_path_ios: "assets/icons/launcher_icon.png"
+  adaptive_icon_background: "assets/splash/launcher_bg.png"
   adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
   windows:
     generate: true
-    image_path: "assets/icons/app_icon_windows.png"
+    image_path: "assets/icons/launcher_icon.png"
 
 flutter_native_splash:
   color: "#ffffff"

@@ -28,11 +28,10 @@ class SettingsState {
 class SettingsNotifier extends Notifier<SettingsState> {
   @override
   SettingsState build() {
-    _loadSettings();
-    return const SettingsState();
+    return _loadSettings();
   }
 
-  void _loadSettings() {
+  SettingsState _loadSettings() {
     try {
       final box = Hive.box<String>(AppConstants.walletBoxName);
       final isDevnetStr = box.get('isDevnet');
@@ -44,18 +43,20 @@ class SettingsNotifier extends Notifier<SettingsState> {
       if (themeStr == 'light') mode = ThemeMode.light;
       if (themeStr == 'dark') mode = ThemeMode.dark;
       
-      state = SettingsState(themeMode: mode, isDevnet: isDevnet);
+      return SettingsState(themeMode: mode, isDevnet: isDevnet);
     } catch (_) {
-      // Use defaults
+      return const SettingsState();
     }
   }
 
-  Future<void> toggleThemeMode() async {
-    final newMode = state.themeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
-    state = state.copyWith(themeMode: newMode);
+  Future<void> setThemeMode(ThemeMode mode) async {
+    state = state.copyWith(themeMode: mode);
     
     final box = Hive.box<String>(AppConstants.walletBoxName);
-    await box.put('themeMode', newMode == ThemeMode.dark ? 'dark' : 'light');
+    String themeStr = 'system';
+    if (mode == ThemeMode.light) themeStr = 'light';
+    if (mode == ThemeMode.dark) themeStr = 'dark';
+    await box.put('themeMode', themeStr);
   }
 
   Future<void> setNetwork(bool isDevnet) async {

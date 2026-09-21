@@ -24,6 +24,15 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
   
+  // Enable edge-to-edge system UI for Android 14+
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.transparent,
+      statusBarColor: Colors.transparent,
+    ),
+  );
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  
   // Initialize Hive
   await Hive.initFlutter();
   

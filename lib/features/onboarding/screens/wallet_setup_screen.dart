@@ -88,9 +88,16 @@ class _WalletSetupScreenState extends ConsumerState<WalletSetupScreen> {
         String privateKeyHex;
         String storedMnemonic = '';
 
-        if (phraseOrKey.startsWith('[') && phraseOrKey.endsWith(']')) {
+        String cleanedKey = phraseOrKey.trim();
+        bool isJsonArray = cleanedKey.startsWith('[') && cleanedKey.endsWith(']');
+        bool isCommaSeparatedNumbers = RegExp(r'^\d+(\s*,\s*\d+)+$').hasMatch(cleanedKey);
+
+        if (isJsonArray || isCommaSeparatedNumbers) {
           // Solana CLI format (JSON array of 64 bytes)
-          final List<dynamic> jsonList = jsonDecode(phraseOrKey);
+          if (!isJsonArray) {
+            cleanedKey = '[$cleanedKey]';
+          }
+          final List<dynamic> jsonList = jsonDecode(cleanedKey);
           final List<int> bytes = jsonList.cast<int>();
           // Ed25519HDKeyPair.fromPrivateKeyBytes expects exactly 32 bytes for the private key
           final keypair = await Ed25519HDKeyPair.fromPrivateKeyBytes(

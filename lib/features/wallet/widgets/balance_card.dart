@@ -75,10 +75,13 @@ class _BalanceCardState extends ConsumerState<BalanceCard> {
     final innerMutedColor = isDark ? Colors.black54 : Colors.white54;
 
     return GestureDetector(
-      onPanDown: (details) => _updateTilt(details.globalPosition),
-      onPanUpdate: (details) => _updateTilt(details.globalPosition),
-      onPanEnd: (_) => _resetTilt(),
-      onPanCancel: () => _resetTilt(),
+      onTapDown: (details) => _updateTilt(details.globalPosition),
+      onTapUp: (_) => _resetTilt(),
+      onTapCancel: () => _resetTilt(),
+      onVerticalDragUpdate: (details) => _updateTilt(details.globalPosition),
+      onVerticalDragEnd: (_) => _resetTilt(),
+      onHorizontalDragUpdate: (details) => _updateTilt(details.globalPosition),
+      onHorizontalDragEnd: (_) => _resetTilt(),
       child: Stack(
         alignment: Alignment.center,
         children: [

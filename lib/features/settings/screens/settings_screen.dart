@@ -66,17 +66,41 @@ class SettingsScreen extends ConsumerWidget {
           _SectionHeader(title: 'Appearance'),
           GlassContainer(
             padding: EdgeInsets.zero,
-            child: ListTile(
-              title: Text('Dark Mode', style: context.typography.bodyLarge),
-              trailing: Switch(
-                value: settings.themeMode == ThemeMode.dark || 
-                       (settings.themeMode == ThemeMode.system && isDark),
-                onChanged: (_) {
-                  ref.read(settingsProvider.notifier).toggleThemeMode();
-                },
-                activeThumbColor: context.colors.primary,
-                activeTrackColor: context.colors.primary.withValues(alpha: 0.5),
-              ),
+            child: Column(
+              children: [
+                SwitchListTile(
+                  title: Text('Follow System Theme', style: context.typography.bodyLarge),
+                  value: settings.themeMode == ThemeMode.system,
+                  onChanged: (val) {
+                    if (val) {
+                      ref.read(settingsProvider.notifier).setThemeMode(ThemeMode.system);
+                    } else {
+                      ref.read(settingsProvider.notifier).setThemeMode(isDark ? ThemeMode.dark : ThemeMode.light);
+                    }
+                  },
+                  activeThumbColor: context.colors.primary,
+                  activeTrackColor: context.colors.primary.withValues(alpha: 0.5),
+                ),
+                Divider(height: 1, color: context.colors.onSurface.withValues(alpha: 0.1)),
+                RadioListTile<ThemeMode>(
+                  title: Text('Light Mode', style: context.typography.bodyLarge),
+                  value: ThemeMode.light,
+                  groupValue: settings.themeMode,
+                  onChanged: settings.themeMode == ThemeMode.system ? null : (val) {
+                    if (val != null) ref.read(settingsProvider.notifier).setThemeMode(val);
+                  },
+                  activeColor: context.colors.primary,
+                ),
+                RadioListTile<ThemeMode>(
+                  title: Text('Dark Mode', style: context.typography.bodyLarge),
+                  value: ThemeMode.dark,
+                  groupValue: settings.themeMode,
+                  onChanged: settings.themeMode == ThemeMode.system ? null : (val) {
+                    if (val != null) ref.read(settingsProvider.notifier).setThemeMode(val);
+                  },
+                  activeColor: context.colors.primary,
+                ),
+              ],
             ),
           ),
           
